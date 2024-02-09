@@ -1,5 +1,7 @@
 # PWP SPRING 2024
-# PROJECT NAME
+# LIBRERIAN
+Create your own library and share books with others
+
 # Group information
 * Student 1. Moiz-Naeem and email
 * Student 2. Mikki mihiltun23@student.oulu.fi
