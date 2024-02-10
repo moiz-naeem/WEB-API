@@ -1,4 +1,5 @@
 import os
+import pytest
 import tempfile
 import time
 from datetime import datetime
@@ -15,7 +16,20 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
 
-
+@pytest.fixture
+def db_handle():
+    db_fd, db_fname = tempfile.mkstemp()
+    app.app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + db_fname
+    app.app.config["TESTING"] = True
+    
+    with app.app.app_context():
+        app.db.create_all()
+        
+    yield app.db
+    
+    app.db.session.remove()
+    os.close(db_fd)
+    os.unlink(db_fname)
 
 def _get_user(first_name="Matti", last_name="Meikalainen"):
     return User(
@@ -88,4 +102,6 @@ def test_create_instances(db_handle):
     #assert db_sensor.location == db_location
     #assert db_sensor in db_deployment.sensors
     #assert db_deployment in db_sensor.deployments
-    #assert db_measurement in db_sensor.measurements    
+    #assert db_measurement in db_sensor.measurements
+
+print("done")
