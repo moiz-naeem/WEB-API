@@ -25,7 +25,7 @@ def db_handle():
     ctx = app.app.app_context()
     ctx.push()
     app.db.create_all()
-        
+    
     yield app.db
     
     app.db.session.rollback()
@@ -110,7 +110,12 @@ def test_create_instances(db_handle):
     assert db_library.owner == db_user
     assert db_library in db_user.libraries
 
-def test_delete_instance(db_handle):
+def test_delete_instances(db_handle):
+    """
+    Test delete cascade rules
+        library deletions cascade into books
+        user deletions cascased into libraries
+    """
     user = _get_user()
     library = _get_library()
     book = _get_book()
@@ -125,15 +130,35 @@ def test_delete_instance(db_handle):
     db_handle.session.add(library)
     db_handle.session.add(book)
     db_handle.session.add(work)
-    
+
     db_handle.session.commit()
-    db_handle.session.delete(work)
+    db_handle.session.delete(library)
+    db_handle.session.commit()
     
-    with pytest.raises(IntegrityError):
-        db_handle.session.commit()
+    assert User.query.count() == 1
+    assert Library.query.count() == 0
+    assert Book.query.count() == 0
+    assert Work.query.count() == 1
 
-    db_handle.session.rollback()
+    library = _get_library()
+    book = _get_book()
 
+    library.owner = user
+    book.library = library
+    book.work = work
+    book.borrower = user
+
+    db_handle.session.add(library)
+    db_handle.session.add(book)
+
+    db_handle.session.commit()
+    db_handle.session.delete(user)
+    db_handle.session.commit()
+    
+    assert User.query.count() == 0
+    assert Library.query.count() == 0
+    assert Book.query.count() == 0
+    assert Work.query.count() == 1
 
 def test_user_columns(db_handle):
     """
@@ -211,7 +236,6 @@ def test_book_columns(db_handle):
         db_handle.session.commit()
     db_handle.session.rollback()
 
-
     book = _get_book()
     work = _get_work()
     book.work = work
@@ -220,10 +244,6 @@ def test_book_columns(db_handle):
     with pytest.raises(IntegrityError):
         db_handle.session.commit()
     db_handle.session.rollback()
-
-
-    
-
 
 def test_library_columns(db_handle):
     """
