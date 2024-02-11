@@ -20,7 +20,7 @@ class User(db.Model):
     id				= db.Column(db.Integer, primary_key=True)
     first_name		= db.Column(db.String(64), nullable=False)
     last_name		= db.Column(db.String(64), nullable=False)
-    email			= db.Column(db.String(64), nullable=False)
+    email			= db.Column(db.String(64), nullable=False, unique=True)
     contact_phone	= db.Column(db.String(64), nullable=True)
     
     libraries		= db.relationship("Library", cascade="all, delete-orphan", back_populates="owner")

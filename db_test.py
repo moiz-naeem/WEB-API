@@ -56,9 +56,9 @@ def _get_work(title="Crime And Punishment", author="Fyodor Dostoevsky"):
         isbn=None
     )
 
-def _get_book():
+def _get_book(status=0):
     return Book(
-        status=1,
+        status=status,
         notes="This is a book",
         condition="Very Good",
         validity_start=datetime.now(),
@@ -109,3 +109,138 @@ def test_create_instances(db_handle):
     assert db_book in db_library.books
     assert db_library.owner == db_user
     assert db_library in db_user.libraries
+
+def test_delete_instance(db_handle):
+    user = _get_user()
+    library = _get_library()
+    book = _get_book()
+    work = _get_work()
+    
+    library.owner = user
+    book.library = library
+    book.work = work
+    book.borrower = user
+    
+    db_handle.session.add(user)
+    db_handle.session.add(library)
+    db_handle.session.add(book)
+    db_handle.session.add(work)
+    
+    db_handle.session.commit()
+    db_handle.session.delete(work)
+    
+    with pytest.raises(IntegrityError):
+        db_handle.session.commit()
+
+    db_handle.session.rollback()
+
+
+def test_user_columns(db_handle):
+    """
+    Tests user columns' restrictions
+        first_name is not null
+        last_name is not null
+        email is unique
+    """
+    user1 = _get_user()
+    user2 = _get_user()
+    db_handle.session.add(user1)
+    db_handle.session.add(user2)
+    with pytest.raises(IntegrityError):
+        db_handle.session.commit()
+    db_handle.session.rollback()
+    
+    user1.first_name = None
+    user1.last_name = None
+    db_handle.session.add(user1)
+    with pytest.raises(IntegrityError):
+        db_handle.session.commit()
+    db_handle.session.rollback()
+
+def test_work_columns(db_handle):
+    """
+    Tests work columns' restrictions
+        title is not null
+        author is not null
+    """
+    work = _get_work()
+    work.title = None
+    db_handle.session.add(work)
+    with pytest.raises(IntegrityError):
+        db_handle.session.commit()
+    db_handle.session.rollback()
+
+    work = _get_work()
+    work.author = None
+    db_handle.session.add(work)
+    with pytest.raises(IntegrityError):
+        db_handle.session.commit()
+    db_handle.session.rollback()
+
+def test_book_columns(db_handle):
+    """
+    Tests work columns' restrictions
+        status is not null
+        work_id is not null
+        library_id is not null
+    """
+    user = _get_user()
+    library = _get_library()
+    book = _get_book(status=None)
+    work = _get_work()
+    library.owner = user
+    book.library = library
+    book.work = work
+    db_handle.session.add(user)
+    db_handle.session.add(library)
+    db_handle.session.add(book)
+    db_handle.session.add(work)
+    with pytest.raises(IntegrityError):
+        db_handle.session.commit()
+    db_handle.session.rollback()
+
+    user = _get_user()
+    library = _get_library()
+    book = _get_book()
+    library.owner = user
+    book.library = library
+    db_handle.session.add(user)
+    db_handle.session.add(library)
+    db_handle.session.add(book)
+    with pytest.raises(IntegrityError):
+        db_handle.session.commit()
+    db_handle.session.rollback()
+
+
+    book = _get_book()
+    work = _get_work()
+    book.work = work
+    db_handle.session.add(book)
+    db_handle.session.add(work)
+    with pytest.raises(IntegrityError):
+        db_handle.session.commit()
+    db_handle.session.rollback()
+
+
+    
+
+
+def test_library_columns(db_handle):
+    """
+    Tests library columns' restrictions
+        name is not null
+        owner_id is not null
+    """
+    user = _get_user()
+    library = _get_library(name=None)
+    db_handle.session.add(user)
+    db_handle.session.add(library)
+    with pytest.raises(IntegrityError):
+        db_handle.session.commit()
+    db_handle.session.rollback()
+
+    library = _get_library()
+    db_handle.session.add(library)
+    with pytest.raises(IntegrityError):
+        db_handle.session.commit()
+    db_handle.session.rollback()
