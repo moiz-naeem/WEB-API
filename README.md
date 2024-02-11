@@ -19,13 +19,15 @@ Database used is SQLite, check wiki for database schema.
 * Flask
 * Flask-SQLAlchemy
 
+### Additional requirements for running tests
+* pytest
+
 To install depencies run to following:
 ```bash
 pip install -r requirements.txt
 ```
 ### Testing
 To create test database with dummy data run the following:
-NOTE: currently not implemented
 ```
-pytest
+pytest db_test.py
 ```
