@@ -22,12 +22,16 @@ def db_handle():
     app.app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + db_fname
     app.app.config["TESTING"] = True
     
-    with app.app.app_context():
-        app.db.create_all()
+    ctx = app.app.app_context()
+    ctx.push()
+    app.db.create_all()
         
     yield app.db
     
+    app.db.session.rollback()
+    app.db.drop_all()
     app.db.session.remove()
+    ctx.pop()
     os.close(db_fd)
     os.unlink(db_fname)
 
@@ -52,7 +56,7 @@ def _get_work(title="Crime And Punishment", author="Fyodor Dostoevsky"):
         isbn=None
     )
 
-def _get_book(work):
+def _get_book():
     return Book(
         status=1,
         notes="This is a book",
@@ -75,10 +79,10 @@ def test_create_instances(db_handle):
     book = _get_book()
     work = _get_work()
 
-    user.libraries = library
-    library.books = book
+    library.owner = user
+    book.library = library
     book.work = work
-    user.books = book
+    book.borrower = user
 
     db_handle.session.add(user)
     db_handle.session.add(library)
@@ -97,11 +101,11 @@ def test_create_instances(db_handle):
     db_work = Work.query.first()
     
     # Check all relationships (both sides)
-    #assert db_measurement.sensor == db_sensor
-    #assert db_location.sensor == db_sensor
-    #assert db_sensor.location == db_location
-    #assert db_sensor in db_deployment.sensors
-    #assert db_deployment in db_sensor.deployments
-    #assert db_measurement in db_sensor.measurements
-
-print("done")
+    assert db_book.borrower == db_user
+    assert db_book in db_user.books
+    assert db_book.work == db_work
+    assert db_book in db_work.books
+    assert db_book.library == db_library
+    assert db_book in db_library.books
+    assert db_library.owner == db_user
+    assert db_library in db_user.libraries

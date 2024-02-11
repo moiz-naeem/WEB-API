@@ -27,5 +27,5 @@ pip install -r requirements.txt
 To create test database with dummy data run the following:
 NOTE: currently not implemented
 ```
-python3 db_test.py
+pytest
 ```
