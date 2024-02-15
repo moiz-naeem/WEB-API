@@ -2,7 +2,7 @@
 
 ## Meeting 1.
 * **DATE:** 5.2.2024
-* **ASSISTANTS:**
+* **ASSISTANTS:** Iván
 
 ### Minutes
 Went over first deliverable.
@@ -22,16 +22,21 @@ Related work:  Add links to the APIs. Classify and justify them correctly.  Clie
 
 
 ## Meeting 2.
-* **DATE:**
-* **ASSISTANTS:**
+* **DATE:** 15.2.2024
+* **ASSISTANTS:** Iván
 
 ### Minutes
 *Summary of what was discussed during the meeting*
+* Look over the database documentation, implementation and test plan.
 
 ### Action points
 *List here the actions points discussed with assistants*
 
-
+* Need to decide where the validation is done: API or database level. 
+* Write down what standard is used for the country code; phone number.... What pattern is used for validation? In documentation, link to resource where standard explanation is from.
+* Get tests running and demo for the next meeting. Important to test data connections and what happens, when one book is removed for example.
+* Add to database table information about what happens when delete row connected to other tables?
+* Minor mismatch between text and implementation (contact information)
 
 
 ## Meeting 3.
