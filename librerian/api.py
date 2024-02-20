@@ -6,8 +6,6 @@ from librerian.resources.library import LibraryCollection, LibraryItem
 from librerian.resources.book import BookCollection, BookItem
 from librerian.resources.work import WorkCollection, WorkItem
 
-from librerian.utils import UserConverter, LibraryConverter, BookConverter 
-
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 api = Api(api_bp)
 
