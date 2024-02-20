@@ -7,8 +7,8 @@ from sqlalchemy.engine import Engine
 from sqlalchemy import event
 from sqlalchemy.exc import IntegrityError, StatementError
 
-import app
-from app import User, Library, Book, Work
+from librerian import create_app, db
+from librerian.models import User, Library, Book, Work
 
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
@@ -17,21 +17,19 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.close()
 
 @pytest.fixture
-def db_handle():
+def app():
     db_fd, db_fname = tempfile.mkstemp()
-    app.app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + db_fname
-    app.app.config["TESTING"] = True
+    config = {
+        "SQLALCHEMY_DATABASE_URI": "sqlite:///" + db_fname,
+        "TESTING": True
+    }
     
-    ctx = app.app.app_context()
-    ctx.push()
-    app.db.create_all()
+    app = create_app(config)
     
-    yield app.db
+    with app.app_context():
+        db.create_all()
+        yield app
     
-    app.db.session.rollback()
-    app.db.drop_all()
-    app.db.session.remove()
-    ctx.pop()
     os.close(db_fd)
     os.unlink(db_fname)
 
@@ -65,7 +63,7 @@ def _get_book(status=0):
         validity_end=datetime.now()
     )
 
-def test_create_instances(db_handle):
+def test_create_instances(app):
     """
     Tests that we can create one instance of each model and save them to the
     database using valid values for all columns. After creation, test that 
@@ -84,11 +82,11 @@ def test_create_instances(db_handle):
     book.work = work
     book.borrower = user
 
-    db_handle.session.add(user)
-    db_handle.session.add(library)
-    db_handle.session.add(book)
-    db_handle.session.add(work)
-    db_handle.session.commit()
+    db.session.add(user)
+    db.session.add(library)
+    db.session.add(book)
+    db.session.add(work)
+    db.session.commit()
     
     # Check that everything exists
     assert User.query.count() == 1
@@ -110,7 +108,7 @@ def test_create_instances(db_handle):
     assert db_library.owner == db_user
     assert db_library in db_user.libraries
 
-def test_delete_instances(db_handle):
+def test_delete_instances(app):
     """
     Test delete cascade rules
         library deletions cascade into books
@@ -126,14 +124,14 @@ def test_delete_instances(db_handle):
     book.work = work
     book.borrower = user
     
-    db_handle.session.add(user)
-    db_handle.session.add(library)
-    db_handle.session.add(book)
-    db_handle.session.add(work)
+    db.session.add(user)
+    db.session.add(library)
+    db.session.add(book)
+    db.session.add(work)
 
-    db_handle.session.commit()
-    db_handle.session.delete(library)
-    db_handle.session.commit()
+    db.session.commit()
+    db.session.delete(library)
+    db.session.commit()
     
     assert User.query.count() == 1
     assert Library.query.count() == 0
@@ -148,19 +146,19 @@ def test_delete_instances(db_handle):
     book.work = work
     book.borrower = user
 
-    db_handle.session.add(library)
-    db_handle.session.add(book)
+    db.session.add(library)
+    db.session.add(book)
 
-    db_handle.session.commit()
-    db_handle.session.delete(user)
-    db_handle.session.commit()
+    db.session.commit()
+    db.session.delete(user)
+    db.session.commit()
     
     assert User.query.count() == 0
     assert Library.query.count() == 0
     assert Book.query.count() == 0
     assert Work.query.count() == 1
 
-def test_user_columns(db_handle):
+def test_user_columns(app):
     """
     Tests user columns' restrictions
         first_name is not null
@@ -169,20 +167,20 @@ def test_user_columns(db_handle):
     """
     user1 = _get_user()
     user2 = _get_user()
-    db_handle.session.add(user1)
-    db_handle.session.add(user2)
+    db.session.add(user1)
+    db.session.add(user2)
     with pytest.raises(IntegrityError):
-        db_handle.session.commit()
-    db_handle.session.rollback()
+        db.session.commit()
+    db.session.rollback()
     
     user1.first_name = None
     user1.last_name = None
-    db_handle.session.add(user1)
+    db.session.add(user1)
     with pytest.raises(IntegrityError):
-        db_handle.session.commit()
-    db_handle.session.rollback()
+        db.session.commit()
+    db.session.rollback()
 
-def test_work_columns(db_handle):
+def test_work_columns(app):
     """
     Tests work columns' restrictions
         title is not null
@@ -190,19 +188,19 @@ def test_work_columns(db_handle):
     """
     work = _get_work()
     work.title = None
-    db_handle.session.add(work)
+    db.session.add(work)
     with pytest.raises(IntegrityError):
-        db_handle.session.commit()
-    db_handle.session.rollback()
+        db.session.commit()
+    db.session.rollback()
 
     work = _get_work()
     work.author = None
-    db_handle.session.add(work)
+    db.session.add(work)
     with pytest.raises(IntegrityError):
-        db_handle.session.commit()
-    db_handle.session.rollback()
+        db.session.commit()
+    db.session.rollback()
 
-def test_book_columns(db_handle):
+def test_book_columns(db):
     """
     Tests work columns' restrictions
         status is not null
@@ -216,36 +214,36 @@ def test_book_columns(db_handle):
     library.owner = user
     book.library = library
     book.work = work
-    db_handle.session.add(user)
-    db_handle.session.add(library)
-    db_handle.session.add(book)
-    db_handle.session.add(work)
+    db.session.add(user)
+    db.session.add(library)
+    db.session.add(book)
+    db.session.add(work)
     with pytest.raises(IntegrityError):
-        db_handle.session.commit()
-    db_handle.session.rollback()
+        db.session.commit()
+    db.session.rollback()
 
     user = _get_user()
     library = _get_library()
     book = _get_book()
     library.owner = user
     book.library = library
-    db_handle.session.add(user)
-    db_handle.session.add(library)
-    db_handle.session.add(book)
+    db.session.add(user)
+    db.session.add(library)
+    db.session.add(book)
     with pytest.raises(IntegrityError):
-        db_handle.session.commit()
-    db_handle.session.rollback()
+        db.session.commit()
+    db.session.rollback()
 
     book = _get_book()
     work = _get_work()
     book.work = work
-    db_handle.session.add(book)
-    db_handle.session.add(work)
+    db.session.add(book)
+    db.session.add(work)
     with pytest.raises(IntegrityError):
-        db_handle.session.commit()
-    db_handle.session.rollback()
+        db.session.commit()
+    db.session.rollback()
 
-def test_library_columns(db_handle):
+def test_library_columns(app):
     """
     Tests library columns' restrictions
         name is not null
@@ -253,14 +251,14 @@ def test_library_columns(db_handle):
     """
     user = _get_user()
     library = _get_library(name=None)
-    db_handle.session.add(user)
-    db_handle.session.add(library)
+    db.session.add(user)
+    db.session.add(library)
     with pytest.raises(IntegrityError):
-        db_handle.session.commit()
-    db_handle.session.rollback()
+        db.session.commit()
+    db.session.rollback()
 
     library = _get_library()
-    db_handle.session.add(library)
+    db.session.add(library)
     with pytest.raises(IntegrityError):
-        db_handle.session.commit()
-    db_handle.session.rollback()
+        db.session.commit()
+    db.session.rollback()

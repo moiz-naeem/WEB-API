@@ -1,5 +1,7 @@
 # Database modesl for app
-from app import app, db
+import click
+from flask.cli import with_appcontext
+from librerian import db
 
 class User(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
@@ -116,7 +118,6 @@ class Library(db.Model):
         }
         return schema
 
-
 class Book(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
     status          = db.Column(db.Integer, nullable=False)
@@ -211,3 +212,8 @@ class Work(db.Model):
             }
         }
         return schema
+
+@click.command("init-db")
+@with_appcontext
+def init_db_command():
+    db.create_all()
