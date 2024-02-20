@@ -200,7 +200,7 @@ def test_work_columns(app):
         db.session.commit()
     db.session.rollback()
 
-def test_book_columns(db):
+def test_book_columns(app):
     """
     Tests work columns' restrictions
         status is not null
