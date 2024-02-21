@@ -47,7 +47,7 @@ class User(db.Model):
                     "description": "First name of the user",
                     "type": "string"
                 },
-                "last_name" : {
+                "last_name": {
                     "description": "Last name of the user",
                     "type": "string"
                 },
@@ -55,6 +55,10 @@ class User(db.Model):
                     "description": "Email address of the user",
                     "type": "string",
                     "format": "email"
+                },
+                "contact_phone": {
+                    "description": "phone number of the user",
+                    "type": "string"
                 }
             }
         }
@@ -113,6 +117,37 @@ class Library(db.Model):
                 "name": {
                     "description": "Name of the library",
                     "type": "string"
+                },
+                "address_line_1": {
+                    "description": "",
+                    "type": "string"
+                },
+                "address_line_2": {
+                    "description": "",
+                    "type": "string"
+                },
+                "city": {
+                    "description": "",
+                    "type": "string"
+                },
+                "country": {
+                    "description": "",
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 2
+                },
+                "postal_code": {
+                    "description": "",
+                    "type": "string"
+                },
+                "contact_email": {
+                    "description": "",
+                    "type": "string",
+                    "format": "email"
+                },
+                "contact_phone": {
+                    "description": "",
+                    "type": "string"
                 }
             }
         }
@@ -165,8 +200,27 @@ class Book(db.Model):
             "properties": {
                 "status": {
                     "description": "Status code of book, range from (0-N)",
-                    "type": "int"
-                }
+                    "type": "int",
+                    "enum": [0, 1, 2, 3, 4, 5]
+                },
+                "notes": {
+                    "description": "User defined notes for book",
+                    "type": "string"
+                },
+                "condition": {
+                    "description": "",
+                    "type": "string"
+                },
+                "validity_start": {
+                    "description": "Datetime when books was borrowed",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "validity_end": {
+                    "description": "Datetime when book is due",
+                    "type": "string",
+                    "format": "date-time"
+                },
             }
         }
         return schema
@@ -207,6 +261,15 @@ class Work(db.Model):
                 },
                 "author": {
                     "description": "Name works author",
+                    "type": "string"
+                },
+                "cover": {
+                    "description": "URI to cover of the work",
+                    "type": "string",
+                    "format": "uri"
+                },
+                "isbn": {
+                    "description": "ISBN of the work",
                     "type": "string"
                 }
             }
