@@ -31,6 +31,8 @@ def create_app(test_config=None):
     from librerian.utils import UserConverter, LibraryConverter, BookConverter 
 
     app.cli.add_command(models.init_db_command)
+    app.cli.add_command(models.generate_db_command)
+    app.cli.add_command(models.nuke)
     app.url_map.converters["user"] = UserConverter
     app.url_map.converters["library"] = LibraryConverter
     app.url_map.converters["book"] = BookConverter 

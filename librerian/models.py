@@ -1,4 +1,3 @@
-# Database modesl for app
 import click
 from flask.cli import with_appcontext
 from librerian import db
@@ -200,7 +199,7 @@ class Book(db.Model):
             "properties": {
                 "status": {
                     "description": "Status code of book, range from (0-N)",
-                    "type": "int",
+                    "type": "integer",
                     "enum": [0, 1, 2, 3, 4, 5]
                 },
                 "notes": {
@@ -220,7 +219,7 @@ class Book(db.Model):
                     "description": "Datetime when book is due",
                     "type": "string",
                     "format": "date-time"
-                },
+                }
             }
         }
         return schema
@@ -280,3 +279,53 @@ class Work(db.Model):
 @with_appcontext
 def init_db_command():
     db.create_all()
+
+@click.command("nuke-db")
+@with_appcontext
+def nuke():
+    Work.query.delete()
+    Book.query.delete()
+    Library.query.delete()
+    User.query.delete()
+    db.session.commit()
+    print("All db tables cleared")
+    pass
+
+def random_string(length=10):
+    import random, string
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(length))
+
+@click.command("gen-db")
+@click.option("--count", default=1, type=int)
+@with_appcontext
+def generate_db_command(count=1):
+    import datetime
+    import random
+
+    for i in range(count * 1):
+        user = User(
+            first_name="test_first_name",
+            last_name="test_last_name",
+            email=random_string(),
+        )
+        for j in range(count * 2):
+            library = Library(
+                name=random_string()
+            )
+            for k in range(count * 4):
+                book = Book(
+                    status=0
+                )
+                work = Work(
+                    title="test_title",
+                    author="test_author"
+                )
+                book.work = work
+                library.books.append(book)
+
+            user.libraries.append(library)
+        db.session.add(user)
+    
+    db.session.commit()
+    print(f"Added {count} users, {count * 2} libraries and {count * 4} books/works.")

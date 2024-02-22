@@ -36,11 +36,12 @@ pip install -r requirements.txt
 
 To install the Librerian as Python package run the following
 ```
-pip install librerian
+pip install -e .
 ```
 
 ### Testing
-To test database run the following
+
+To test database run the following (this requires Librerian as package)
 ```
-pytest db_test.py --verbose
+pytest tests/db_test.py --verbose
 ```
