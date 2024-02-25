@@ -28,14 +28,16 @@ def create_app(test_config=None):
     from . import models
     from . import api
     
-    from librerian.utils import UserConverter, LibraryConverter, BookConverter 
+    from librerian.utils import UserConverter, LibraryConverter, BookConverter, WorkConverter
 
     app.cli.add_command(models.init_db_command)
     app.cli.add_command(models.generate_db_command)
     app.cli.add_command(models.nuke)
+    
     app.url_map.converters["user"] = UserConverter
     app.url_map.converters["library"] = LibraryConverter
     app.url_map.converters["book"] = BookConverter 
+    app.url_map.converters["work"] = WorkConverter 
 
     app.register_blueprint(api.api_bp)
 

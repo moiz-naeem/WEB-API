@@ -328,4 +328,4 @@ def generate_db_command(count=1):
         db.session.add(user)
     
     db.session.commit()
-    print(f"Added {count} users, {count * 2} libraries and {count * 4} books/works.")
+    print(f"Added {count} users, {count * 2} libraries and {count * 8} books/works.")
