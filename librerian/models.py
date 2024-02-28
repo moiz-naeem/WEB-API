@@ -12,6 +12,9 @@ class User(db.Model):
     libraries       = db.relationship("Library", cascade="all, delete-orphan", back_populates="owner")
     books           = db.relationship("Book", back_populates="borrower")
 
+    def __repr__(self):
+        return f"User {self.first_name} {self.last_name} <{self.id}>"
+
     def serialize(self, short_form=False):
         serialized_data = {
             "first_name": self.first_name,
@@ -78,6 +81,9 @@ class Library(db.Model):
     
     owner           = db.relationship("User", back_populates="libraries")
     books           = db.relationship("Book", cascade="all, delete-orphan", back_populates="library")
+
+    def __repr__(self):
+        return f"Library {self.name} <{self.id}>"
 
     def serialize(self, short_form=False):
         serialized_data = {
@@ -168,6 +174,9 @@ class Book(db.Model):
     library         = db.relationship("Library", back_populates="books")
     borrower        = db.relationship("User", back_populates="books")
 
+    def __repr__(self):
+        return f"Book {self.work.title} <{self.id}>"
+
     def serialize(self, short_form=False):
         serialized_data = {
             "status": self.status,
@@ -232,6 +241,9 @@ class Work(db.Model):
     isbn            = db.Column(db.String(64), nullable=True)
     
     books           = db.relationship("Book", back_populates="work")
+
+    def __repr__(self):
+        return f"Work {self.title} <{self.id}>"
 
     def serialize(self, short_form=False):
         serialized_data = {
