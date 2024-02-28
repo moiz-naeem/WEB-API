@@ -12,22 +12,11 @@ api = Api(api_bp)
 api.add_resource(UserCollection, "/users/")
 api.add_resource(UserItem, "/users/<user:user>/")
 
-api.add_resource(LibraryCollection,
-    "/libraries/",
-    "/users/<user:user>/libraries/"
-)
+api.add_resource(LibraryCollection, "/libraries/", "/users/<user:user>/libraries/")
+api.add_resource(LibraryItem, "/users/<user:user>/libraries/<library:library>/")
 
-api.add_resource(LibraryItem,
-    "/libraries/<library:library>/",
-    "/users/<user:user>/libraries/<library:library>/"
-)
+api.add_resource(BookCollection, "/books/", "/users/<user:user>/libraries/<library:library>/books/")
+api.add_resource(BookItem, "/users/<user:user>/libraries/<library:library>/books/<book:book>/")
 
-api.add_resource(BookCollection,
-    "/libraries/<library:library>/books/",
-    "/users/<user:user>/libraries/<library:library>/books/"
-)
-api.add_resource(BookItem,
-    "/libraries/<library:library>/books/<book:book>/",
-    "/users/<user:user>/libraries/<library:library>/books/<book:book>/"
-)
-
+api.add_resource(WorkCollection, "/works/")
+api.add_resource(WorkItem, "/works/<work:work>/")

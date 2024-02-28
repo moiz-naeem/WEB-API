@@ -12,16 +12,18 @@ from librerian import db
 class UserCollection(Resource):
     
     def get(self):
+        #TODO
         user_data = []
-        user_list = User.query.all()
-        for user in user_list:
+        for user in User.query.all():
             user_data.append(user.serialize())
-        return user_data, 200
-    
+        return Response(
+            response=json.dumps(user_data, indent=4),
+            status=200
+        )
+        
     def post(self):
         if not request.json:
             return Response(
-                headers={},
                 response="Reguest not json",
                 status=415
             )
@@ -39,7 +41,6 @@ class UserCollection(Resource):
             db.session.commit()
         except IntegrityError:
             return Response(
-                headers={},
                 response="User already exits",
                 status=409
             )
@@ -52,12 +53,43 @@ class UserCollection(Resource):
 
 class UserItem(Resource):
     def get(self, user):
-        if user is None:
-            return "", 404
-        
-        return user.serialize(), 200
+        #TODO
+        return Response(
+            response=json.dumps(user.serialize(), indent=4),
+            status=200
+        )
     
     def put(self, user):
-        pass
+        if not request.json:
+            return Response(
+                response="Request not json",
+                status=215
+            )
+
+        try:
+            validate(request.json, User.json_schema(), format_checker=draft7_format_checker)
+        except ValidationError as e:
+            raise BadRequest(description=str(e))
+
+        user.deserialize(doc=request.json)
+
+        try:
+            db.session.commit()
+        except IntegrityError:
+            return Response(
+                response="User already exits",
+                status=409
+            )
+
+        return Response(
+            response="User update succesful",
+            status=204
+        )
+
     def delete(self, user):
-        pass
+        db.session.delete(library)
+        db.session.commit()
+        return Response(
+            response="User deleted",
+            status=204
+        )
