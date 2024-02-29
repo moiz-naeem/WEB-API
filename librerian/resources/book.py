@@ -23,7 +23,11 @@ class BookCollection(Resource):
         )
 
     def post(self, user=None, library=None):
-        #currently busted, as work is not set
+        if user is None:
+            return Response(
+                response="Invalid URL for POST",
+                status=415
+            )
         if not request.json:
             return Response(
                 response="Request not json",
@@ -37,19 +41,24 @@ class BookCollection(Resource):
         book = Book()
         book.deserialize(doc=request.json)
         book.library = library
-
+        if Work.query.filter_by(id=book.work_id) is None:
+            return Response(
+                response="Work is invalid",
+                status=409
+            )
         try:
             db.session.add(book)
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return Response(
-                response="Library already exits",
+                response=f"{book} already exits",
                 status=409
             )
 
         return Response(
             headers={"Location": url_for("api.bookitem", library=library, user=user)},
-            response="Library creation succesful",
+            response=f"{book} creation succesful",
             status=201
         )
 
@@ -79,13 +88,14 @@ class BookItem(Resource):
         try:
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return Response(
-                response="Book already exits",
+                response=f"{book} already exits",
                 status=409
             )
-
+        
         return Response(
-            response="Book update succesful",
+            response=f"{book} update succesful",
             status=204
         )
 
@@ -93,6 +103,6 @@ class BookItem(Resource):
         db.session.delete(book)
         db.session.commit()
         return Response(
-            response="Book deleted",
+            response=f"{book} deleted",
             status=204
         )

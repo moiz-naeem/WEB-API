@@ -40,14 +40,15 @@ class UserCollection(Resource):
             db.session.add(user)
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return Response(
-                response="User already exits",
+                response=f"{user} already exits",
                 status=409
             )
 
         return Response(
             headers={"Location": url_for("api.useritem", user=user)},
-            response="User creation succesful",
+            response=f"{user} creation succesful",
             status=201
         )
 
@@ -76,20 +77,21 @@ class UserItem(Resource):
         try:
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return Response(
-                response="User already exits",
+                response=f"{user} already exits",
                 status=409
             )
 
         return Response(
-            response="User update succesful",
+            response=f"{user} update succesful",
             status=204
         )
 
     def delete(self, user):
-        db.session.delete(library)
+        db.session.delete(user)
         db.session.commit()
         return Response(
-            response="User deleted",
+            response=f"{user} deleted",
             status=204
         )

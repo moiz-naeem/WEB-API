@@ -37,14 +37,15 @@ class WorkCollection(Resource):
             db.session.add(work)
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return Response(
-                response="Work already exits",
+                response=f"{work} already exists",
                 status=409
             )
 
         return Response(
             headers={"Location": url_for("api.workitem", work=work)},
-            response="Work creation succesful",
+            response=f"{work} creation succesful",
             status=201
         )
 
@@ -75,14 +76,15 @@ class WorkItem(Resource):
             db.session.add(work)
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return Response(
-                response="Work already exits",
+                response=f"{work} already exists",
                 status=409
             )
 
         return Response(
             headers={"Location": url_for("api.workitem", work=work)},
-            response="Work creation succesful",
+            response=f"{work} creation succesful",
             status=201
         )
 
@@ -91,10 +93,10 @@ class WorkItem(Resource):
             db.session.delete(work)
             db.session.commit(work)
             return Response(
-                response="Work deleted",
+                response=f"{work} deleted",
                 status=204
             )
         return Response(
-            response="Work has books associated, cannot be deleted",
+            response=f"{work} has books associated, cannot be deleted",
             status=409
         )

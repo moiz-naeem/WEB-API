@@ -183,7 +183,8 @@ class Book(db.Model):
             "notes": self.notes,
             "condition": self.condition,
             "validity_start": self.validity_start,
-            "validity_end": self.validity_end
+            "validity_end": self.validity_end,
+            "work_id": self.work_id
         }
         return serialized_data
     
@@ -199,6 +200,7 @@ class Book(db.Model):
             self.validity_end = datetime.fromisoformat(doc.get("validity_end"))
         else:
             self.validity_end = None
+        self.work_id = int(doc["work_id"])
 
     @staticmethod
     def json_schema():
@@ -228,6 +230,10 @@ class Book(db.Model):
                     "description": "Datetime when book is due",
                     "type": "string",
                     "format": "date-time"
+                },
+                "work_id": {
+                    "description": "ID of work that book is instance of",
+                    "type": "integer"
                 }
             }
         }

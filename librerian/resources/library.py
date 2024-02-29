@@ -50,14 +50,15 @@ class LibraryCollection(Resource):
             db.session.add(library)
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return Response(
-                response="Library already exits",
+                response=f"{library} already exits",
                 status=409
             )
 
         return Response(
             headers={"Location": url_for("api.libraryitem", library=library, user=user)},
-            response="Library creation succesful",
+            response=f"{library} creation succesful",
             status=201
         )
 
@@ -87,13 +88,14 @@ class LibraryItem(Resource):
         try:
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return Response(
-                response="Library already exits",
+                response=f"{library} already exits",
                 status=409
             )
 
         return Response(
-            response="Library update succesful",
+            response=f"{library} update succesful",
             status=204
         )
         
@@ -101,6 +103,6 @@ class LibraryItem(Resource):
         db.session.delete(library)
         db.session.commit()
         return Response(
-            response="Library deleted",
+            response=f"{library} deleted",
             status=204
         )
