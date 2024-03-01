@@ -3,6 +3,7 @@ import secrets
 from flask import Response, request, url_for
 from werkzeug.exceptions import Forbidden, NotFound
 from werkzeug.routing import BaseConverter
+import urllib.parse as urlparse
 
 #converters etc
 from librerian.models import *
@@ -10,24 +11,26 @@ from librerian.models import *
 class UserConverter(BaseConverter):
     
     def to_python(self, user):
-        db_user = User.query.filter_by(id=user).first()
+        handle = urlparse.unquote(user)
+        db_user = User.query.filter_by(handle=handle).first()
         if db_user is None:
             raise NotFound
         return db_user
 
     def to_url(self, db_user):
-        return str(db_user.id)
+        return urlparse.quote(db_user.handle, safe="")
 
 class LibraryConverter(BaseConverter):
     
     def to_python(self, library):
-        db_library = Library.query.filter_by(id=library).first()
+        name = urlparse.unquote(library)
+        db_library = Library.query.filter_by(name=name).first()
         if db_library is None:
             raise NotFound
         return db_library
 
     def to_url(self, db_library):
-        return str(db_library.id)
+        return urlparse.quote(db_library.name, safe="")
 
 class BookConverter(BaseConverter):
     def to_python(self, book):

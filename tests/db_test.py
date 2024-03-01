@@ -33,8 +33,9 @@ def app():
     os.close(db_fd)
     os.unlink(db_fname)
 
-def _get_user(first_name="Matti", last_name="Meikalainen"):
+def _get_user(handle="matmei", first_name="Matti", last_name="Meikalainen"):
     return User(
+        handle=handle,
         first_name=first_name,
         last_name=last_name,
         email="{}.{}@email.com".format(first_name, last_name)
@@ -173,8 +174,7 @@ def test_user_columns(app):
         db.session.commit()
     db.session.rollback()
     
-    user1.first_name = None
-    user1.last_name = None
+    user1.handle = None
     db.session.add(user1)
     with pytest.raises(IntegrityError):
         db.session.commit()

@@ -4,8 +4,9 @@ from librerian import db
 
 class User(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
-    first_name      = db.Column(db.String(64), nullable=False)
-    last_name       = db.Column(db.String(64), nullable=False)
+    handle          = db.Column(db.String(64), nullable=False, unique=True)
+    first_name      = db.Column(db.String(64), nullable=True)
+    last_name       = db.Column(db.String(64), nullable=True)
     email           = db.Column(db.String(64), nullable=False, unique=True)
     contact_phone   = db.Column(db.String(64), nullable=True)
     
@@ -43,8 +44,12 @@ class User(db.Model):
     def json_schema():
         schema = {
             "type": "object",
-            "required": ["first_name", "last_name", "email"],
+            "required": ["handle", "email"],
             "properties": {
+                "handle": {
+                    "description": "Handle of the user, unique to user",
+                    "type": "string"
+                },
                 "first_name": {
                     "description": "First name of the user",
                     "type": "string"
@@ -68,14 +73,13 @@ class User(db.Model):
 
 class Library(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
-    name            = db.Column(db.String(64), nullable=False)
+    name            = db.Column(db.String(64), nullable=False, unique=True)
     address_line_1  = db.Column(db.String(64), nullable=True)
     address_line_2  = db.Column(db.String(64), nullable=True)
     city            = db.Column(db.String(64), nullable=True)
     country         = db.Column(db.String(64), nullable=True)
     postal_code     = db.Column(db.String(64), nullable=True)
     contact_email   = db.Column(db.String(64), nullable=True)
-    contact_phone   = db.Column(db.String(64), nullable=True)
     
     owner_id        = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     
@@ -94,7 +98,6 @@ class Library(db.Model):
             "country": self.country,
             "postal_code": self.postal_code,
             "contact_email": self.contact_email,
-            "contact_phone": self.contact_phone
         }
         if not short_form:
             books_serialized = []
@@ -111,7 +114,6 @@ class Library(db.Model):
         self.country = doc.get("country")
         self.postal_code = doc.get("postal_code")
         self.contact_email = doc.get("contact_email")
-        self.contact_phone = doc.get("contact_phone")
 
     @staticmethod
     def json_schema():
@@ -149,10 +151,6 @@ class Library(db.Model):
                     "description": "",
                     "type": "string",
                     "format": "email"
-                },
-                "contact_phone": {
-                    "description": "",
-                    "type": "string"
                 }
             }
         }
@@ -314,6 +312,37 @@ def random_string(length=10):
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(length))
 
+def random_user():
+    first = random_string()
+    last = random_string()
+    user = User(
+        handle=random_string(),
+        first_name=first,
+        last_name=last,
+        email=f"{first}.{last}@{random_string(4)}.com",
+    )
+    return user
+
+def random_library():
+    library = Library(
+        name=random_string()
+    )
+    return library
+
+def random_book():
+    book = Book(
+        status=0
+    )
+    return book
+
+def random_work():
+    work = Work(
+        title=random_string(),
+        author=random_string()
+    )
+    return work
+
+
 @click.command("gen-db")
 @click.option("--count", default=1, type=int)
 @with_appcontext
@@ -322,26 +351,13 @@ def generate_db_command(count=1):
     import random
 
     for i in range(count * 1):
-        user = User(
-            first_name="test_first_name",
-            last_name="test_last_name",
-            email=random_string(),
-        )
+        user = random_user()
         for j in range(count * 2):
-            library = Library(
-                name=random_string()
-            )
+            library = random_library()
             for k in range(count * 4):
-                book = Book(
-                    status=0
-                )
-                work = Work(
-                    title="test_title",
-                    author="test_author"
-                )
-                book.work = work
+                book = random_book()
+                book.work = random_work()
                 library.books.append(book)
-
             user.libraries.append(library)
         db.session.add(user)
     
