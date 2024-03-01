@@ -48,24 +48,34 @@ class User(db.Model):
             "properties": {
                 "handle": {
                     "description": "Handle of the user, unique to user",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "first_name": {
                     "description": "First name of the user",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "last_name": {
                     "description": "Last name of the user",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "email": {
                     "description": "Email address of the user",
                     "type": "string",
-                    "format": "email"
+                    "format": "email",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "contact_phone": {
                     "description": "phone number of the user",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 }
             }
         }
@@ -76,7 +86,7 @@ class Library(db.Model):
     name            = db.Column(db.String(64), nullable=False, unique=True)
     address_line_1  = db.Column(db.String(64), nullable=True)
     address_line_2  = db.Column(db.String(64), nullable=True)
-    city            = db.Column(db.String(64), nullable=True)
+    city            = db.Column(db.String(2), nullable=True)
     country         = db.Column(db.String(64), nullable=True)
     postal_code     = db.Column(db.String(64), nullable=True)
     contact_email   = db.Column(db.String(64), nullable=True)
@@ -123,19 +133,27 @@ class Library(db.Model):
             "properties": {
                 "name": {
                     "description": "Name of the library",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "address_line_1": {
                     "description": "",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "address_line_2": {
                     "description": "",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "city": {
                     "description": "",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "country": {
                     "description": "",
@@ -145,12 +163,16 @@ class Library(db.Model):
                 },
                 "postal_code": {
                     "description": "",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "contact_email": {
                     "description": "",
                     "type": "string",
-                    "format": "email"
+                    "format": "email",
+                    "minLength": 1,
+                    "maxLength": 64
                 }
             }
         }
@@ -213,11 +235,15 @@ class Book(db.Model):
                 },
                 "notes": {
                     "description": "User defined notes for book",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "condition": {
                     "description": "",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "validity_start": {
                     "description": "Datetime when books was borrowed",
@@ -272,20 +298,28 @@ class Work(db.Model):
             "properties": {
                 "title": {
                     "description": "Title of work",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "author": {
                     "description": "Name works author",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "cover": {
                     "description": "URI to cover of the work",
                     "type": "string",
-                    "format": "uri"
+                    "format": "uri",
+                    "minLength": 1,
+                    "maxLength": 64
                 },
                 "isbn": {
                     "description": "ISBN of the work",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                 }
             }
         }
