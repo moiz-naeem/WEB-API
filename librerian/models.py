@@ -67,7 +67,7 @@ class User(db.Model):
                 "email": {
                     "description": "Email address of the user",
                     "type": "string",
-                    "format": "email",
+                    "format": "idn-email",
                     "minLength": 1,
                     "maxLength": 64
                 },
@@ -170,7 +170,7 @@ class Library(db.Model):
                 "contact_email": {
                     "description": "",
                     "type": "string",
-                    "format": "email",
+                    "format": "idn-email",
                     "minLength": 1,
                     "maxLength": 64
                 }
