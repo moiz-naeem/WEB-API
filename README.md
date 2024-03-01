@@ -43,5 +43,6 @@ pip install -e .
 
 To test database run the following (this requires Librerian as package)
 ```
+pip install pytest
 pytest tests/db_test.py --verbose
 ```
