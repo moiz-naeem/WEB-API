@@ -53,6 +53,7 @@ class User(db.Model):
                 if true, serialize only user information 
         """
         serialized_data = {
+            "handle": self.handle,
             "first_name": self.first_name,
             "last_name": self.last_name,
             "email": self.email,
@@ -76,8 +77,9 @@ class User(db.Model):
         Parameters:
             doc : json dict
         """
-        self.first_name = doc["first_name"]
-        self.last_name = doc["last_name"]
+        self.handle = doc["handle"]
+        self.first_name = doc.get("first_name")
+        self.last_name = doc.get("last_name")
         self.email = doc["email"]
         self.contact_phone = doc.get("contact_phone")
 

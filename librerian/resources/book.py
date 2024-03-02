@@ -22,12 +22,13 @@ class BookCollection(Resource):
             book_list = Book.query.all()
         else:
             book_list = Book.query.filter_by(library=library)
-        book_data = []
+        body = {"items": []}
         for book in book_list:
-            book_data.append(book.serialize())
+            body["items"].append(book.serialize())
         return Response(
-            response=json.dumps(book_data,indent=4),
-            status=200
+            response=json.dumps(body, indent=4),
+            status=200,
+            mimetype="application/json"
         )
 
     def post(self, user=None, library=None):
@@ -75,7 +76,8 @@ class BookItem(Resource):
         #TODO
         return Response(
             response=json.dumps(book.serialize(), indent=4),
-            status=200
+            status=200,
+            mimetype="application/json"
         )
 
     def put(self, _user=None, library=None, book=None):

@@ -19,12 +19,13 @@ from librerian import db
 class UserCollection(Resource):
     def get(self):
         #TODO
-        user_data = []
+        body = {"items": []}
         for user in User.query.all():
-            user_data.append(user.serialize())
+            body["items"].append(user.serialize(short_form=True))
         return Response(
-            response=json.dumps(user_data, indent=4),
-            status=200
+            response=json.dumps(body, indent=4),
+            status=200,
+            mimetype="application/json"
         )
 
     def post(self):
@@ -63,7 +64,8 @@ class UserItem(Resource):
         #TODO
         return Response(
             response=json.dumps(user.serialize(), indent=4),
-            status=200
+            status=200,
+            mimetype="application/json"
         )
 
     def put(self, user):

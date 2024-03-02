@@ -23,12 +23,13 @@ class LibraryCollection(Resource):
         else:
             library_list = Library.query.filter_by(owner=user)
 
-        library_data = []
+        body = {"items": []}
         for library in library_list:
-            library_data.append(library.serialize())
+            body["items"].append(library.serialize())
         return Response(
-            response=json.dumps(library_data, indent=4),
-            status=200
+            response=json.dumps(body, indent=4),
+            status=200,
+            mimetype="application/json"
         )
 
     def post(self, user=None):
@@ -73,7 +74,8 @@ class LibraryItem(Resource):
         #TODO
         return Response(
             response=json.dumps(library.serialize(), indent=4),
-            status=200
+            status=200,
+            mimetype="application/json"
         )
 
     def put(self, user=None, library=None):

@@ -19,12 +19,13 @@ from librerian import db
 class WorkCollection(Resource):
     def get(self):
         work_list = Work.query.all()
-        work_data = []
+        body = {"items": []}
         for work in work_list:
-            work_data.append(work.serialize())
+            body["items"].append(work.serialize())
         return Response(
-            response=json.dumps(work_data, indent=4),
-            status=200
+            response=json.dumps(body, indent=4),
+            status=200,
+            mimetype="application/json"
         )
 
     def post(self):
@@ -63,7 +64,8 @@ class WorkItem(Resource):
         #TODO
         return Response(
             response=json.dumps(work.serialize(), indent=4),
-            status=200
+            status=200,
+            mimetype="application/json"
         )
 
     def put(self, work):
