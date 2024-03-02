@@ -1,6 +1,13 @@
+"""
+User resources
+
+Classes:
+    UserCollection : Resource
+    UserItem : Resource
+"""
 import json
 from jsonschema import validate, ValidationError, draft7_format_checker
-from werkzeug.exceptions import NotFound, Conflict, BadRequest, UnsupportedMediaType
+from werkzeug.exceptions import BadRequest
 
 from flask import Response, request, url_for
 from flask_restful import Resource
@@ -10,7 +17,6 @@ from librerian.models import User
 from librerian import db
 
 class UserCollection(Resource):
-    
     def get(self):
         #TODO
         user_data = []
@@ -20,22 +26,22 @@ class UserCollection(Resource):
             response=json.dumps(user_data, indent=4),
             status=200
         )
-        
+
     def post(self):
         if not request.json:
             return Response(
                 response="Reguest not json",
                 status=415
             )
-            
+
         try:
             validate(request.json, User.json_schema(), format_checker=draft7_format_checker)
         except ValidationError as e:
-            raise BadRequest(description=str(e))
+            raise BadRequest(description=str(e)) from e
 
         user = User()
         user.deserialize(doc=request.json)
-        
+
         try:
             db.session.add(user)
             db.session.commit()
@@ -59,7 +65,7 @@ class UserItem(Resource):
             response=json.dumps(user.serialize(), indent=4),
             status=200
         )
-    
+
     def put(self, user):
         if not request.json:
             return Response(
@@ -70,7 +76,7 @@ class UserItem(Resource):
         try:
             validate(request.json, User.json_schema(), format_checker=draft7_format_checker)
         except ValidationError as e:
-            raise BadRequest(description=str(e))
+            raise BadRequest(description=str(e)) from e
 
         user.deserialize(doc=request.json)
 

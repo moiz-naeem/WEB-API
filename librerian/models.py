@@ -1,15 +1,42 @@
+"""
+Database models
+
+Classes:
+    User : Model
+    Library : Model
+    Book : Model
+    Work : Model
+
+Functions:
+    init_db_command
+    empty_db_command
+    random_string
+    random_user
+    random_library
+    random_book
+    random_work
+    generate_db_command
+"""
+from datetime import datetime
 import click
 from flask.cli import with_appcontext
 from librerian import db
 
 class User(db.Model):
+    """
+    User database model
+
+    Methods:
+        serialize
+        deserialize
+        json_schema
+    """
     id              = db.Column(db.Integer, primary_key=True)
     handle          = db.Column(db.String(64), nullable=False, unique=True)
     first_name      = db.Column(db.String(64), nullable=True)
     last_name       = db.Column(db.String(64), nullable=True)
     email           = db.Column(db.String(64), nullable=False, unique=True)
     contact_phone   = db.Column(db.String(64), nullable=True)
-    
     libraries       = db.relationship("Library", cascade="all, delete-orphan", back_populates="owner")
     books           = db.relationship("Book", back_populates="borrower")
 
@@ -17,6 +44,14 @@ class User(db.Model):
         return f"User {self.first_name} {self.last_name} <{self.id}>"
 
     def serialize(self, short_form=False):
+        """
+        Serialize user and user libraries into json
+
+        Parameters:
+            short_form : bool
+                default : False
+                if true, serialize only user information 
+        """
         serialized_data = {
             "first_name": self.first_name,
             "last_name": self.last_name,
@@ -35,6 +70,12 @@ class User(db.Model):
         return serialized_data
 
     def deserialize(self, doc):
+        """
+        Deserialize user from json
+
+        Parameters:
+            doc : json dict
+        """
         self.first_name = doc["first_name"]
         self.last_name = doc["last_name"]
         self.email = doc["email"]
@@ -42,6 +83,9 @@ class User(db.Model):
 
     @staticmethod
     def json_schema():
+        """
+        Return static user json-schema
+        """
         schema = {
             "type": "object",
             "required": ["handle", "email"],
@@ -82,6 +126,14 @@ class User(db.Model):
         return schema
 
 class Library(db.Model):
+    """
+    Library database model
+
+    Methods:
+        serialize
+        deserialize
+        json_schema
+    """
     id              = db.Column(db.Integer, primary_key=True)
     name            = db.Column(db.String(64), nullable=False, unique=True)
     address_line_1  = db.Column(db.String(64), nullable=True)
@@ -90,9 +142,7 @@ class Library(db.Model):
     country         = db.Column(db.String(64), nullable=True)
     postal_code     = db.Column(db.String(64), nullable=True)
     contact_email   = db.Column(db.String(64), nullable=True)
-    
     owner_id        = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    
     owner           = db.relationship("User", back_populates="libraries")
     books           = db.relationship("Book", cascade="all, delete-orphan", back_populates="library")
 
@@ -100,6 +150,14 @@ class Library(db.Model):
         return f"Library {self.name} <{self.id}>"
 
     def serialize(self, short_form=False):
+        """
+        Serialize library and books in library into json
+
+        Parameters:
+        short_form : bool
+            default : False
+            if true, serialize only library information 
+        """
         serialized_data = {
             "name": self.name,
             "address_line_1": self.address_line_1,
@@ -115,8 +173,14 @@ class Library(db.Model):
                 books_serialized.append(book.serialize(short_form=True))
             serialized_data["books"] = books_serialized
         return serialized_data
-    
+
     def deserialize(self, doc):
+        """
+        Deserilize library from json dict
+        
+        Parameters:
+            doc : json dict
+        """
         self.name = doc["name"]
         self.address_line_1 = doc.get("address_line_1")
         self.address_line_2 = doc.get("address_line_2")
@@ -127,6 +191,9 @@ class Library(db.Model):
 
     @staticmethod
     def json_schema():
+        """
+        Return static library json-schema
+        """
         schema = {
             "type": "object",
             "required": ["name"],
@@ -179,17 +246,36 @@ class Library(db.Model):
         return schema
 
 class Book(db.Model):
+    """
+    Book database model
+
+    Variables:
+        id
+        status
+        notes
+        condition
+        validity_start
+        validity_end
+        work_id
+        library_id
+        borrower_id
+        work
+        library
+        borrower
+    Methods:
+        serialize
+        deserialize
+        json_schema
+    """
     id              = db.Column(db.Integer, primary_key=True)
     status          = db.Column(db.Integer, nullable=False)
     notes           = db.Column(db.String(64), nullable=True)
     condition       = db.Column(db.String(64), nullable=True)
     validity_start  = db.Column(db.DateTime, nullable=True)
     validity_end    = db.Column(db.DateTime, nullable=True)
-    
     work_id         = db.Column(db.Integer, db.ForeignKey("work.id"), nullable=False)
     library_id      = db.Column(db.Integer, db.ForeignKey("library.id"), nullable=False)
     borrower_id     = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
-    
     work            = db.relationship("Work", back_populates="books")
     library         = db.relationship("Library", back_populates="books")
     borrower        = db.relationship("User", back_populates="books")
@@ -197,7 +283,15 @@ class Book(db.Model):
     def __repr__(self):
         return f"Book {self.work.title} <{self.id}>"
 
-    def serialize(self, short_form=False):
+    def serialize(self, _short_form=False):
+        """
+        Serialize book into json
+
+        Parameters:
+        short_form : bool
+            default : False
+            currently unused
+        """
         serialized_data = {
             "status": self.status,
             "notes": self.notes,
@@ -207,8 +301,11 @@ class Book(db.Model):
             "work_id": self.work_id
         }
         return serialized_data
-    
+
     def deserialize(self, doc):
+        """
+        Deserialize book from doc
+        """
         self.status = int(doc["status"])
         self.notes = doc.get("notes")
         self.condition = doc.get("condition")
@@ -224,6 +321,9 @@ class Book(db.Model):
 
     @staticmethod
     def json_schema():
+        """
+        Return static book JSON-scheme
+        """
         schema = {
             "type": "object",
             "required": ["status"],
@@ -264,18 +364,40 @@ class Book(db.Model):
         return schema
 
 class Work(db.Model):
+    """
+    Work database model
+
+    Variables:
+        id
+        title
+        author
+        cover
+        isbn
+        books
+    Methods:
+        serialize
+        deserialize
+        json_schema
+    """
     id              = db.Column(db.Integer, primary_key=True)
     title           = db.Column(db.String(64), nullable=False)
     author          = db.Column(db.String(64), nullable=False)
     cover           = db.Column(db.String(64), nullable=True)
     isbn            = db.Column(db.String(64), nullable=True)
-    
     books           = db.relationship("Book", back_populates="work")
 
     def __repr__(self):
         return f"Work {self.title} <{self.id}>"
 
-    def serialize(self, short_form=False):
+    def serialize(self, _short_form=False):
+        """
+        Serialize work into json
+
+        Parameters:
+        short_form : bool
+            default : False
+            currently unused
+        """
         serialized_data = {
             "title": self.title,
             "author": self.author,
@@ -285,6 +407,9 @@ class Work(db.Model):
         return serialized_data
 
     def deserialize(self, doc):
+        """
+        Deserialize book from doc
+        """
         self.title = doc["title"]
         self.author = doc["author"]
         self.cover = doc.get("cover")
@@ -292,6 +417,9 @@ class Work(db.Model):
 
     @staticmethod
     def json_schema():
+        """
+        Return static work json-schema
+        """
         schema = {
             "type": "object",
             "required": ["title", "author"],
@@ -328,25 +456,43 @@ class Work(db.Model):
 @click.command("init-db")
 @with_appcontext
 def init_db_command():
+    """
+    Click command for creating database tables
+    """
     db.create_all()
 
-@click.command("nuke-db")
+@click.command("empty-db")
 @with_appcontext
-def nuke():
+def empty_db_command():
+    """
+    Click command for emptying database
+    Use with care
+    """
     Work.query.delete()
     Book.query.delete()
     Library.query.delete()
     User.query.delete()
     db.session.commit()
     print("All db tables cleared")
-    pass
 
 def random_string(length=10):
-    import random, string
+    """
+    Create random string
+    
+    Parameters:
+        length : int
+            defines length of string
+    """
+    import random
+    import string
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(length))
 
 def random_user():
+    """
+    Create random user
+    No quaranteed uniqueness
+    """
     first = random_string()
     last = random_string()
     user = User(
@@ -358,18 +504,30 @@ def random_user():
     return user
 
 def random_library():
+    """
+    Create random library
+    No quaranteed uniqueness
+    """
     library = Library(
         name=random_string()
     )
     return library
 
 def random_book():
+    """
+    Create random book
+    No work assinged, otherwise valid
+    """
     book = Book(
         status=0
     )
     return book
 
 def random_work():
+    """
+    Create random work
+    No quaranteed uniqueness
+    """
     work = Work(
         title=random_string(),
         author=random_string()
@@ -381,19 +539,24 @@ def random_work():
 @click.option("--count", default=1, type=int)
 @with_appcontext
 def generate_db_command(count=1):
-    import datetime
-    import random
+    """
+    Click command for generating database
 
-    for i in range(count * 1):
+    Parameters:
+    count : int
+        Defines how many items are created
+    """
+
+    for _i in range(count * 1):
         user = random_user()
-        for j in range(count * 2):
+        for _j in range(count * 2):
             library = random_library()
-            for k in range(count * 4):
+            for _k in range(count * 4):
                 book = random_book()
                 book.work = random_work()
                 library.books.append(book)
             user.libraries.append(library)
         db.session.add(user)
-    
+
     db.session.commit()
     print(f"Added {count} users, {count * 2} libraries and {count * 8} books/works.")

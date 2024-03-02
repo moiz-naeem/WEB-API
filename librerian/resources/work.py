@@ -1,10 +1,19 @@
+"""
+Work resources
+
+Classes:
+    WorkCollection : Resource
+    WorkItem : Resource
+"""
 import json
-from jsonschema import validate, ValidationError
+from jsonschema import validate, ValidationError, draft7_format_checker
+from werkzeug.exceptions import BadRequest
+
 from flask import Response, request, url_for
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 
-from librerian.models import Work
+from librerian.models import Work, Book
 from librerian import db
 
 class WorkCollection(Resource):
@@ -24,11 +33,11 @@ class WorkCollection(Resource):
                 response="Request not json",
                 status=415
             )
-            
+
         try:
             validate(request.json, Work.json_schema(), format_checker=draft7_format_checker)
         except ValidationError as e:
-            raise BadRequest(description=str(e))
+            raise BadRequest(description=str(e)) from e
 
         work = Work()
         work.deserialize(doc=request.json)
@@ -63,11 +72,11 @@ class WorkItem(Resource):
                 response="Request not json",
                 status=415
             )
-            
+
         try:
             validate(request.json, Work.json_schema(), format_checker=draft7_format_checker)
         except ValidationError as e:
-            raise BadRequest(description=str(e))
+            raise BadRequest(description=str(e)) from e
 
         work = Work()
         work.deserialize(doc=request.json)
@@ -91,7 +100,7 @@ class WorkItem(Resource):
     def delete(self, work):
         if not Book.query.filter_by(work=work):
             db.session.delete(work)
-            db.session.commit(work)
+            db.session.commit()
             return Response(
                 response=f"{work} deleted",
                 status=204

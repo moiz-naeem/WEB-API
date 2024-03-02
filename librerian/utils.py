@@ -1,53 +1,111 @@
-import json
-import secrets
-from flask import Response, request, url_for
-from werkzeug.exceptions import Forbidden, NotFound
-from werkzeug.routing import BaseConverter
-import urllib.parse as urlparse
+"""
+Utility Functions and URI converters
 
-#converters etc
-from librerian.models import *
+Classes:
+    UserConverter : BaseConverter
+    LibraryConverter : BaseConverter
+    BookConverter : BaseConverter
+    WorkConverter : BaseConverter
+"""
+#import json
+#import secrets
+from urllib import parse
+#from flask import Response, request, url_for
+from werkzeug.exceptions import NotFound
+from werkzeug.routing import BaseConverter
+
+from librerian.models import User, Library, Book, Work
 
 class UserConverter(BaseConverter):
-    
-    def to_python(self, user):
-        handle = urlparse.unquote(user)
+    """
+    URI converter for user models
+
+    Methods:
+        to_python
+        to_url
+    """
+    def to_python(self, value):
+        """
+        Get model from uri
+        """
+        handle = parse.unquote(value)
         db_user = User.query.filter_by(handle=handle).first()
         if db_user is None:
             raise NotFound
         return db_user
 
-    def to_url(self, db_user):
-        return urlparse.quote(db_user.handle, safe="")
+    def to_url(self, value):
+        """
+        Get uri from model
+        """
+        return parse.quote(value.handle, safe="")
 
 class LibraryConverter(BaseConverter):
-    
-    def to_python(self, library):
-        name = urlparse.unquote(library)
+    """
+    URI converter for library models
+
+    Methods:
+        to_python
+        to_url
+    """
+    def to_python(self, value):
+        """
+        Get model from uri
+        """
+        name = parse.unquote(value)
         db_library = Library.query.filter_by(name=name).first()
         if db_library is None:
             raise NotFound
         return db_library
 
-    def to_url(self, db_library):
-        return urlparse.quote(db_library.name, safe="")
+    def to_url(self, value):
+        """
+        Get uri from model
+        """
+        return parse.quote(value.name, safe="")
 
 class BookConverter(BaseConverter):
-    def to_python(self, book):
-        db_book = Book.query.filter_by(id=book).first()
+    """
+    URI converter for book models
+
+    Methods:
+        to_python
+        to_url
+    """
+    def to_python(self, value):
+        """
+        Get model from uri
+        """
+        db_book = Book.query.filter_by(id=value).first()
         if db_book is None:
             raise NotFound
         return db_book
 
-    def to_url(self, db_book):
-        return str(db_book.id)
+    def to_url(self, value):
+        """
+        Get uri from model
+        """
+        return str(value.id)
 
 class WorkConverter(BaseConverter):
-    def to_python(self, work):
-        db_work = Work.query.filter_by(id=work).first()
+    """
+    URI converter for work models
+
+    Methods:
+        to_python
+        to_url
+    """
+    def to_python(self, value):
+        """
+        Get model from uri
+        """
+        db_work = Work.query.filter_by(id=value).first()
         if db_work is None:
             raise NotFound
         return db_work
 
-    def to_url(self, db_work):
-        return str(db_work.id)
+    def to_url(self, value):
+        """
+        Get uri from model
+        """
+        return str(value.id)
