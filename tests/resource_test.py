@@ -28,7 +28,6 @@ def client():
         "SQLALCHEMY_DATABASE_URI": "sqlite:///" + db_fname,
         "TESTING": True
     }
-
     app = create_app(config)
     
     with app.app_context():
@@ -54,6 +53,10 @@ def _populate_db():
             owner = user,
             name=f"test-library-number-{i}",
             address_line_1=f"test-library-address-{i}",
+            address_line_2=f"test-library-address2-{i}",
+            city=f"test-city-{i}",
+            country="FI",
+            postal_code=f"9999{i}",
             contact_email=f"test.user.library{i}@email.com"
         )
         db.session.add(library)
@@ -86,7 +89,6 @@ def _populate_db():
         )
         db.session.add(book)
         
-        
     db.session.commit()
 
 class TestUserCollection(object):
@@ -118,10 +120,10 @@ class TestLibraryCollection(object):
         for item in body["items"]:
             assert "name" in item
             assert "address_line_1" in item
-            #assert "address_line_2" in item
+            assert "address_line_2" in item
             assert "city" in item
-            #assert "country" in item
-            #assert "postal_code" in item
+            assert "country" in item
+            assert "postal_code" in item
             assert "contact_email" in item
  
  
