@@ -172,7 +172,7 @@ class Library(db.Model):
         if not short_form:
             books_serialized = []
             for book in self.books:
-                books_serialized.append(book.serialize(short_form=True))
+                books_serialized.append(book.serialize(True))
             serialized_data["books"] = books_serialized
         return serialized_data
 
