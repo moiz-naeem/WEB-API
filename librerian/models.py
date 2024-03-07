@@ -561,4 +561,60 @@ def generate_db_command(count=1):
         db.session.add(user)
 
     db.session.commit()
-    print(f"Added {count} users, {count * 2} libraries and {count * 8} books/works.")
+    print(f"Added {count} randomized users, {count * 2} libraries and {count * 8} books/works.")
+    add_example_library()
+
+
+"""
+Example users Alice and Bob, and Alice's library
+to always have one example that persists in addition to the randomized data
+"""
+def add_example_library():
+    user = User(
+            handle=f"alice123",
+            first_name="Alice",
+            last_name="McTest",
+            email="alice.mctest@email.com",
+            contact_phone= "0394111111"
+        )
+    db.session.add(user)
+    user = User(
+        handle=f"bob123",
+        first_name="Bob",
+        last_name="McTest",
+        email="bob.mctest@email.com",
+        contact_phone= "0394222222"
+    )
+    db.session.add(user)
+    library = Library(
+        owner = user,
+        name=f"Alice's library",
+        address_line_1="Aliceroad 123",
+        address_line_2="PO123",
+        city=f"Aliceland",
+        country="AL",
+        postal_code="99999",
+        contact_email=f"info@alices.library.com"
+    )
+    db.session.add(library)
+    work = Work(
+        title = "Alice's stories",
+        author="Alice McTest",
+        cover=f"978-4-7659-7000-1.jpg",
+        isbn=f"978-4-7659-7000-1"
+    )
+    db.session.add(work)
+    book = Book(
+        status = 1,
+        notes="Signed by author on the inside front cover",
+        condition="Like new",
+        #TODO date checks
+        #validity_start= datetime.now(), #datetime.date(2024, 1, 1),
+        #validity_end = datetime.now(),
+        library = library,
+        work = work,
+        borrower_id = user.handle
+    )
+    db.session.add(book)
+    db.session.commit()
+    print("Added example: Alice's library")
