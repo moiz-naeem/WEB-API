@@ -1,0 +1,9 @@
+---
+tags:
+  - User
+description: Delete user
+responses:
+  '200':
+    description: The user was succesfully deleted
+  '404':
+    description: The user was not found

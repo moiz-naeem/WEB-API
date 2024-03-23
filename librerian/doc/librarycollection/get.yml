@@ -1,0 +1,13 @@
+---
+tags:
+  - Library
+description: Get the list of all libraries or list libraries owned by the user
+responses:
+  '200':
+    description: List of libraries
+    content:
+      application/json:
+        example:
+          items:
+          - name: Library of Alexandria
+          - name: The Burning Library of Alexandria

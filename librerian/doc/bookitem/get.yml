@@ -1,0 +1,14 @@
+---
+tags:
+  - Book
+description: Get details of the book
+responses:
+  '200':
+    description: Data of single book
+    content:
+      application/json:
+        example:
+          status: 0
+          work_id: 0
+  '404':
+    description: The book was not found

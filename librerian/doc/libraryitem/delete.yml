@@ -1,0 +1,9 @@
+---
+tags:
+  - Library
+description: Delete library, and all the books in the library.
+responses:
+  '200':
+    description: The library was succesfully deleted
+  '404':
+    description: The library was not found

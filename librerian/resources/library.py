@@ -6,17 +6,18 @@ Classes:
     LibraryItem : Resource
 """
 import json
-from jsonschema import validate, ValidationError, draft7_format_checker
 from werkzeug.exceptions import BadRequest
 
 from flask import Response, request, url_for
 from flask_restful import Resource
+from flasgger import swag_from, validate
 from sqlalchemy.exc import IntegrityError
 
 from librerian.models import Library
 from librerian import db
 
 class LibraryCollection(Resource):
+    @swag_from("../doc/librarycollection/get.yml")
     def get(self, user=None):
         if user is None:
             library_list = Library.query.all()
@@ -32,22 +33,13 @@ class LibraryCollection(Resource):
             mimetype="application/json"
         )
 
+    @swag_from("../doc/librarycollection/post.yml")
     def post(self, user=None):
         if user is None:
-            return Response(
-                response="Invalid URL for POST",
-                status=415
-            )
+            return "Invalid URL for POST", 415
         if not request.json:
-            return Response(
-                response="Request not json",
-                status=415
-            )
-
-        try:
-            validate(request.json, Library.json_schema(), format_checker=draft7_format_checker)
-        except ValidationError as e:
-            raise BadRequest(description=str(e)) from e
+            return "Wrong media type was used", 415
+        validate(request.json, "Library", "../doc/librerian.yml")
 
         library = Library()
         library.deserialize(doc=request.json)
@@ -58,10 +50,7 @@ class LibraryCollection(Resource):
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            return Response(
-                response=f"{library} already exits",
-                status=409
-            )
+            return "A library with the same name already exists", 409
 
         return Response(
             headers={"Location": url_for("api.libraryitem", library=library, user=user)},
@@ -70,6 +59,7 @@ class LibraryCollection(Resource):
         )
 
 class LibraryItem(Resource):
+    @swag_from("../doc/libraryitem/get.yml")
     def get(self, _user=None, library=None):
         #TODO
         return Response(
@@ -78,17 +68,11 @@ class LibraryItem(Resource):
             mimetype="application/json"
         )
 
+    @swag_from("../doc/libraryitem/put.yml")
     def put(self, user=None, library=None):
         if not request.json:
-            return Response(
-                response="Request not json",
-                status=215
-            )
-
-        try:
-            validate(request.json, Library.json_schema(), format_checker=draft7_format_checker)
-        except ValidationError as e:
-            raise BadRequest(description=str(e)) from e
+            return "Wrong media type was used", 415
+        validate(request.json, "Library", "../doc/librerian.yml")
 
         library.deserialize(doc=request.json)
         library.owner = user
@@ -97,20 +81,12 @@ class LibraryItem(Resource):
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            return Response(
-                response=f"{library} already exits",
-                status=409
-            )
+            return "A library with the same name already exists", 409
 
-        return Response(
-            response=f"{library} update succesful",
-            status=204
-        )
+        return "The library was updated succesfully", 204
+        
 
     def delete(self, _user=None, library=None):
         db.session.delete(library)
         db.session.commit()
-        return Response(
-            response=f"{library} deleted",
-            status=204
-        )
+        return "The library was succesfully deleted", 200

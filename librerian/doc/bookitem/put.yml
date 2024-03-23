@@ -1,0 +1,24 @@
+---
+tags:
+  - Book
+description: Replace book data with new values
+requestBody:
+  description: JSON document that contains new basic data for the book
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Book'
+      example:
+        status: 0
+        work_id: 0
+responses:
+  '204':
+    description: The book was updated successfully
+  '400':
+    description: The request body was not valid
+  '404':
+    description: The book was not found
+  '409':
+    description: A book with the same --- already exists
+  '415':
+    description: Wrong media type was used

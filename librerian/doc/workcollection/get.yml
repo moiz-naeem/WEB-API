@@ -1,0 +1,18 @@
+---
+tags:
+  - Work
+description: Get the list of works
+responses:
+  '200':
+    description: List of works
+    content:
+      application/json:
+        example:
+          items:
+          - title: Crime and Punishment
+            author: Fyodor Dostoyevsky
+          - title: One Hundred Years of Solitude
+            author: Gabriel García Márquez
+          - title: Vierastila
+            author: Miki Liukkonen
+            isbn: 978-951-0-48546-0

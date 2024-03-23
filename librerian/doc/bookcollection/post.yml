@@ -1,0 +1,27 @@
+---
+tags:
+  - Book
+description: Create a new book
+requestBody:
+  description: JSON document that contains new basic data for the book
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Book'
+    example:
+      status: 0
+      work_id: 0
+responses:
+  '201':
+    description: The book was created succesfully
+    headers:
+      Location: 
+        description: URI of the new book
+        schema: 
+          type: string
+  '400':
+    description: The request body was not valid
+  '409':
+    description: Work used in book is invalid
+  '415':
+    description: Wrong media type was used

@@ -1,0 +1,25 @@
+---
+tags:
+  - Work
+description: Replace work data with new values
+requestBody:
+  description: JSON document that contains new basic data for the work
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Work'
+      example:
+        title: Johnny Mitten ja Ville-Valle rotkon reunalla
+        author: Silvia Classic
+        isbn: 978-951-0-48563-7
+responses:
+  '204':
+    description: The work was updated successfully
+  '400':
+    description: The request body was not valid
+  '404':
+    description: The work was not found
+  '409':
+    description: A work with the same --- already exists
+  '415':
+    description: Wrong media type was used

@@ -1,0 +1,17 @@
+---
+tags:
+  - User
+description: Get details of user
+responses:
+  '200':
+    description: Data of single user
+    content:
+      application/json:
+        example:
+          handle: mattimeik
+          first_name: Matti
+          last_name: Meikalainen
+          email: matti.meikalainen@email.com
+          contact_phone: 04123456789
+  '404':
+    description: The user was not found

@@ -1,4 +1,6 @@
 ---
+tags:
+  - User
 description: Get the list of user
 responses:
   '200':
@@ -6,13 +8,14 @@ responses:
     content:
       application/json:
         example:
-        - handle: mattimeik
-          first_name: Matti
-          last_name: Meikalainen
-          email: matti.meikalainen@email.com
-          contact_phone: 04123456789
-        - handle: maijameik
-          first_name: Maija
-          last_name: Meikalainen
-          email: maija.meikalainen@email.com
-          contact_phone: 04987654321
+          items:
+          - handle: mattimeik
+            first_name: Matti
+            last_name: Meikalainen
+            email: matti.meikalainen@email.com
+            contact_phone: 04123456789
+          - handle: maijameik
+            first_name: Maija
+            last_name: Meikalainen
+            email: maija.meikalainen@email.com
+            contact_phone: 04987654321

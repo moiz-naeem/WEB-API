@@ -6,7 +6,6 @@ Classes:
     UserItem : Resource
 """
 import json
-from jsonschema import validate, ValidationError, draft7_format_checker
 from werkzeug.exceptions import BadRequest
 
 from flask import Response, request, url_for
@@ -34,6 +33,7 @@ class UserCollection(Resource):
     def post(self):
         if not request.json:
             return "Wrong media type was used", 415
+        
         validate(request.json, "User", "../doc/librerian.yml")
 
         user = User()
@@ -44,10 +44,7 @@ class UserCollection(Resource):
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            return Response(
-                response="A user with the same handle or email already exists",
-                status=409
-            )
+            return "A user with the same handle or email already exists", 409
 
         return Response(
             headers={"Location": url_for("api.useritem", user=user)},
@@ -56,6 +53,7 @@ class UserCollection(Resource):
         )
 
 class UserItem(Resource):
+    @swag_from("../doc/useritem/get.yml")
     def get(self, user):
         #TODO
         return Response(
@@ -63,18 +61,13 @@ class UserItem(Resource):
             status=200,
             mimetype="application/json"
         )
-
+    
+    @swag_from("../doc/useritem/put.yml")
     def put(self, user):
         if not request.json:
-            return Response(
-                response="Request not json",
-                status=215
-            )
-
-        try:
-            validate(request.json, User.json_schema(), format_checker=draft7_format_checker)
-        except ValidationError as e:
-            raise BadRequest(description=str(e)) from e
+            return "Wrong media type was used", 415
+        
+        validate(request.json, "User", "../doc/librerian.yml")
 
         user.deserialize(doc=request.json)
 
@@ -82,20 +75,12 @@ class UserItem(Resource):
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            return Response(
-                response=f"{user} already exits",
-                status=409
-            )
+            return "A user with the same handle or email already exists", 409
+    
+        return "The user was updated succesfully", 204
 
-        return Response(
-            response=f"{user} update succesful",
-            status=204
-        )
-
+    @swag_from("../doc/useritem/delete.yml")
     def delete(self, user):
         db.session.delete(user)
         db.session.commit()
-        return Response(
-            response=f"{user} deleted",
-            status=204
-        )
+        return "The user was succesfully deleted", 200

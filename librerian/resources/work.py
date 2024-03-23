@@ -6,17 +6,18 @@ Classes:
     WorkItem : Resource
 """
 import json
-from jsonschema import validate, ValidationError, draft7_format_checker
 from werkzeug.exceptions import BadRequest
 
 from flask import Response, request, url_for
 from flask_restful import Resource
+from flasgger import swag_from, validate
 from sqlalchemy.exc import IntegrityError
 
 from librerian.models import Work, Book
 from librerian import db
 
 class WorkCollection(Resource):
+    @swag_from("../doc/workcollection/get.yml")
     def get(self):
         work_list = Work.query.all()
         body = {"items": []}
@@ -27,18 +28,13 @@ class WorkCollection(Resource):
             status=200,
             mimetype="application/json"
         )
-
+    
+    @swag_from("../doc/workcollection/post.yml")
     def post(self):
         if not request.json:
-            return Response(
-                response="Request not json",
-                status=415
-            )
-
-        try:
-            validate(request.json, Work.json_schema(), format_checker=draft7_format_checker)
-        except ValidationError as e:
-            raise BadRequest(description=str(e)) from e
+            return "Wrong media type was used", 415
+        
+        validate(request.json, "Work", "../doc/librerian.yml")
 
         work = Work()
         work.deserialize(doc=request.json)
@@ -48,18 +44,16 @@ class WorkCollection(Resource):
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            return Response(
-                response=f"{work} already exists",
-                status=409
-            )
+            return "A work with the same ---- already exists", 409
 
         return Response(
             headers={"Location": url_for("api.workitem", work=work)},
-            response=f"{work} creation succesful",
+            response="The work was created succesfully",
             status=201
         )
 
 class WorkItem(Resource):
+    @swag_from("../doc/workitem/get.yml")
     def get(self, work):
         #TODO
         return Response(
@@ -68,17 +62,12 @@ class WorkItem(Resource):
             mimetype="application/json"
         )
 
+    @swag_from("../doc/workitem/put.yml")
     def put(self, work):
         if not request.json:
-            return Response(
-                response="Request not json",
-                status=415
-            )
-
-        try:
-            validate(request.json, Work.json_schema(), format_checker=draft7_format_checker)
-        except ValidationError as e:
-            raise BadRequest(description=str(e)) from e
+            return "Wrong media type was used", 415
+        
+        validate(request.json, "Work", "../doc/librerian.yml")
 
         work = Work()
         work.deserialize(doc=request.json)
@@ -88,26 +77,18 @@ class WorkItem(Resource):
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            return Response(
-                response=f"{work} already exists",
-                status=409
-            )
+            return "A work with the same ---- already exists", 409
 
         return Response(
             headers={"Location": url_for("api.workitem", work=work)},
-            response=f"{work} creation succesful",
+            response="The work was created succesfully",
             status=201
         )
 
+    @swag_from("../doc/workitem/delete.yml")
     def delete(self, work):
         if not Book.query.filter_by(work=work):
             db.session.delete(work)
             db.session.commit()
-            return Response(
-                response=f"{work} deleted",
-                status=204
-            )
-        return Response(
-            response=f"{work} has books associated, cannot be deleted",
-            status=409
-        )
+            return "The work was succesfully deleted", 200
+        return "The work has books associated, cannot be deleted", 409

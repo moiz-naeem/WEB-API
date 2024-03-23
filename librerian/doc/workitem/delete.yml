@@ -1,0 +1,11 @@
+---
+tags:
+  - Work
+description: Delete the work
+responses:
+  '200':
+    description: The work was succesfully deleted
+  '404':
+    description: The work was not found
+  '409':
+    description: The work has books associated, cannot be deleted

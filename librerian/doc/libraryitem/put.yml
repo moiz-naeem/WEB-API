@@ -1,0 +1,23 @@
+---
+tags:
+  - Library
+description: Replace library data with new values
+requestBody:
+  description: JSON document that contains new basic data for the library
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Library'
+      example:
+        name: Library of Alexandria
+responses:
+  '204':
+    description: The library was updated successfully
+  '400':
+    description: The request body was not valid
+  '404':
+    description: The library was not found
+  '409':
+    description: A library with the same name already exists
+  '415':
+    description: Wrong media type was used

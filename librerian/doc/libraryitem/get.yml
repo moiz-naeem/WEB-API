@@ -1,0 +1,13 @@
+---
+tags:
+  - Library
+description: Get details of library
+responses:
+  '200':
+    description: Data of single library
+    content:
+      application/json:
+        example:
+          name: Library of Alexandria
+  '404':
+    description: The library was not found

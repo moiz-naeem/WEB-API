@@ -1,0 +1,27 @@
+---
+tags:
+  - Work
+description: Create new a work
+requestBody:
+  description: JSON document that contains new basic data for the work
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Work'
+    example:
+      title: The Brothers Karamazov
+      author: Fyodor Dostoyevsky
+responses:
+  '201':
+    description: The work was created succesfully
+    headers:
+      Location: 
+        description: URI of the new work
+        schema: 
+          type: string
+  '400':
+    description: The request body was not valid
+  '409':
+    description: A work with the same ---- already exists
+  '415':
+    description: Wrong media type was used

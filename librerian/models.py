@@ -1,5 +1,5 @@
 """
-Database models
+Database models and database related helpers
 
 Classes:
     User : Model
@@ -29,7 +29,6 @@ class User(db.Model):
     Methods:
         serialize
         deserialize
-        json_schema
     """
     id              = db.Column(db.Integer, primary_key=True)
     handle          = db.Column(db.String(64), nullable=False, unique=True)
@@ -83,50 +82,6 @@ class User(db.Model):
         self.email = doc["email"]
         self.contact_phone = doc.get("contact_phone")
 
-    @staticmethod
-    def json_schema():
-        """
-        Return static user json-schema
-        """
-        schema = {
-            "type": "object",
-            "required": ["handle", "email"],
-            "properties": {
-                "handle": {
-                    "description": "Handle of the user, unique to user",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "first_name": {
-                    "description": "First name of the user",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "last_name": {
-                    "description": "Last name of the user",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "email": {
-                    "description": "Email address of the user",
-                    "type": "string",
-                    "format": "idn-email",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "contact_phone": {
-                    "description": "phone number of the user",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                }
-            }
-        }
-        return schema
-
 class Library(db.Model):
     """
     Library database model
@@ -134,7 +89,6 @@ class Library(db.Model):
     Methods:
         serialize
         deserialize
-        json_schema
     """
     id              = db.Column(db.Integer, primary_key=True)
     name            = db.Column(db.String(64), nullable=False, unique=True)
@@ -191,83 +145,14 @@ class Library(db.Model):
         self.postal_code = doc.get("postal_code")
         self.contact_email = doc.get("contact_email")
 
-    @staticmethod
-    def json_schema():
-        """
-        Return static library json-schema
-        """
-        schema = {
-            "type": "object",
-            "required": ["name"],
-            "properties": {
-                "name": {
-                    "description": "Name of the library",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "address_line_1": {
-                    "description": "",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "address_line_2": {
-                    "description": "",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "city": {
-                    "description": "",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "country": {
-                    "description": "",
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 2
-                },
-                "postal_code": {
-                    "description": "",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "contact_email": {
-                    "description": "",
-                    "type": "string",
-                    "format": "idn-email",
-                    "minLength": 1,
-                    "maxLength": 64
-                }
-            }
-        }
-        return schema
 
 class Book(db.Model):
     """
     Book database model
 
-    Variables:
-        id
-        status
-        notes
-        condition
-        validity_start
-        validity_end
-        work_id
-        library_id
-        borrower_id
-        work
-        library
-        borrower
     Methods:
         serialize
         deserialize
-        json_schema
     """
     id              = db.Column(db.Integer, primary_key=True)
     status          = db.Column(db.Integer, nullable=False)
@@ -321,65 +206,15 @@ class Book(db.Model):
             self.validity_end = None
         self.work_id = int(doc["work_id"])
 
-    @staticmethod
-    def json_schema():
-        """
-        Return static book JSON-scheme
-        """
-        schema = {
-            "type": "object",
-            "required": ["status"],
-            "properties": {
-                "status": {
-                    "description": "Status code of book, range from (0-N)",
-                    "type": "integer",
-                    "enum": [0, 1, 2, 3, 4, 5]
-                },
-                "notes": {
-                    "description": "User defined notes for book",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "condition": {
-                    "description": "",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "validity_start": {
-                    "description": "Datetime when books was borrowed",
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "validity_end": {
-                    "description": "Datetime when book is due",
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "work_id": {
-                    "description": "ID of work that book is instance of",
-                    "type": "integer"
-                }
-            }
-        }
         return schema
 
 class Work(db.Model):
     """
     Work database model
 
-    Variables:
-        id
-        title
-        author
-        cover
-        isbn
-        books
     Methods:
         serialize
         deserialize
-        json_schema
     """
     id              = db.Column(db.Integer, primary_key=True)
     title           = db.Column(db.String(64), nullable=False)
@@ -417,43 +252,6 @@ class Work(db.Model):
         self.cover = doc.get("cover")
         self.isbn = doc.get("isbn")
 
-    @staticmethod
-    def json_schema():
-        """
-        Return static work json-schema
-        """
-        schema = {
-            "type": "object",
-            "required": ["title", "author"],
-            "properties": {
-                "title": {
-                    "description": "Title of work",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "author": {
-                    "description": "Name works author",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "cover": {
-                    "description": "URI to cover of the work",
-                    "type": "string",
-                    "format": "uri",
-                    "minLength": 1,
-                    "maxLength": 64
-                },
-                "isbn": {
-                    "description": "ISBN of the work",
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64
-                }
-            }
-        }
-        return schema
 
 @click.command("init-db")
 @with_appcontext

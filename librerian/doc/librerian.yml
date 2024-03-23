@@ -1,8 +1,8 @@
 ---
 openapi: 3.0.3
 
-servers:
-- url: /api
+#servers:
+#- url: /api
 
 info:
   title: Librerian - OpenAPI 3.0

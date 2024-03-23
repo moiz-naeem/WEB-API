@@ -1,0 +1,14 @@
+---
+tags:
+  - Work
+description: Get details of the work
+responses:
+  '200':
+    description: Data of single work
+    content:
+      application/json:
+        example:
+          title: The Brothers Karamazov
+          author: Fyodor Dostoyevsky
+  '404':
+    description: The work was not found

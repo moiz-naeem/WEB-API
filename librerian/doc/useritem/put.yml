@@ -1,0 +1,24 @@
+---
+tags:
+  - User
+description: Replace user data with new values
+requestBody:
+  description: JSON document that contains new basic data for the user
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/User'
+      example:
+        handle: newuserhandle
+        email: new.address@email.com
+responses:
+  '204':
+    description: The user was updated successfully
+  '400':
+    description: The request body was not valid
+  '404':
+    description: The user was not found
+  '409':
+    description: A user with the same name already exists
+  '415':
+    description: Wrong media type was used

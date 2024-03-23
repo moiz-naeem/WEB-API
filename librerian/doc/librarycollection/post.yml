@@ -1,0 +1,26 @@
+---
+tags:
+  - Library
+description: Create a new library
+requestBody:
+  description: JSON document that contains new basic data for the library
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Library'
+      example:
+        name: Library of Alexandria
+responses:
+  '201':
+    description: The library was created succesfully
+    headers:
+      Location: 
+        description: URI of the new library
+        schema: 
+          type: string
+  '400':
+    description: The request body was not valid
+  '409':
+    description: A library with the same name already exists
+  '415':
+    description: Wrong media type was used
