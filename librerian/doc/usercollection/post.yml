@@ -1,0 +1,25 @@
+---
+description: Create new a user
+requestBody:
+  description: JSON document that contains new basic data for the user
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/User'
+    example:
+      handle: mattimeik
+      email: matti.meikalainen@email.com
+responses:
+  '201':
+    description: New user created succesfully
+    headers:
+      Location: 
+        description: URI of the new user
+        schema: 
+          type: string
+  '400':
+    description: The request body was not valid
+  '409':
+    description: A user with the same handle or email already exists
+  '415':
+    description: Wrong media type was used

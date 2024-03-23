@@ -4,3 +4,5 @@ flask_restful
 sqlalchemy
 jsonschema
 pytest
+flasgger
+pyyaml

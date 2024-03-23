@@ -1,0 +1,157 @@
+---
+openapi: 3.0.3
+
+servers:
+- url: /api
+
+info:
+  title: Librerian - OpenAPI 3.0
+  description: |-
+    Placeholder text
+    [Librerian repository](https://github.com/moiz-naeem/WEB-API)
+#  termsOfService: http://foobar.placeholder
+#  contact:
+#    email: foobar@email.com
+  license:
+    name: GPL-3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+  version: 0.0.1
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+      - handle
+      - email
+      properties:
+        contact_phone:
+          description: phone number of the user
+          maxLength: 64
+          minLength: 1
+          type: string
+        email:
+          description: Email address of the user
+          format: idn-email
+          maxLength: 64
+          minLength: 1
+          type: string
+        first_name:
+          description: First name of the user
+          maxLength: 64
+          minLength: 1
+          type: string
+        handle:
+          description: Handle of the user, unique to user
+          maxLength: 64
+          minLength: 1
+          type: string
+        last_name:
+          description: Last name of the user
+          maxLength: 64
+          minLength: 1
+          type: string
+    Library:
+      type: object
+      required:
+      - name
+      properties:
+        address_line_1:
+          description: ''
+          maxLength: 64
+          minLength: 1
+          type: string
+        address_line_2:
+          description: ''
+          maxLength: 64
+          minLength: 1
+          type: string
+        city:
+          description: ''
+          maxLength: 64
+          minLength: 1
+          type: string
+        contact_email:
+          description: ''
+          format: idn-email
+          maxLength: 64
+          minLength: 1
+          type: string
+        country:
+          description: ''
+          maxLength: 2
+          minLength: 2
+          type: string
+        name:
+          description: Name of the library
+          maxLength: 64
+          minLength: 1
+          type: string
+        postal_code:
+          description: ''
+          maxLength: 64
+          minLength: 1
+          type: string
+    Book:
+      type: object
+      required:
+      - status
+      properties:
+        condition:
+          description: ''
+          maxLength: 64
+          minLength: 1
+          type: string
+        notes:
+          description: User defined notes for book
+          maxLength: 64
+          minLength: 1
+          type: string
+        status:
+          description: Status code of book, range from (0-N)
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          type: integer
+        validity_end:
+          description: Datetime when book is due
+          format: date-time
+          type: string
+        validity_start:
+          description: Datetime when books was borrowed
+          format: date-time
+          type: string
+        work_id:
+          description: ID of work that book is instance of
+          type: integer
+    Work:
+      type: object
+      required:
+      - title
+      - author
+      properties:
+        author:
+          description: Name works author
+          maxLength: 64
+          minLength: 1
+          type: string
+        cover:
+          description: URI to cover of the work
+          format: uri
+          maxLength: 64
+          minLength: 1
+          type: string
+        isbn:
+          description: ISBN of the work
+          maxLength: 64
+          minLength: 1
+          type: string
+        title:
+          description: Title of work
+          maxLength: 64
+          minLength: 1
+          type: string

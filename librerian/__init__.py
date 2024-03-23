@@ -6,9 +6,10 @@ Functions
 """
 
 import os
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
-# from librerian.constants import
+from flasgger import Swagger, swag_from
+from librerian.constants import *
 
 db = SQLAlchemy()
 
@@ -16,12 +17,20 @@ def create_app(test_config=None):
     """
     Create Flask app
     """
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__, instance_relative_config=True, static_folder="static")
     app.config.from_mapping(
         SECRET_KEY="dev",
         SQLALCHEMY_DATABASE_URI="sqlite:///" + os.path.join(app.instance_path, "development.db"),
         SQLALCHEMY_TRACK_MODIFICATIONS=False
     )
+
+    app.config["SWAGGER"] = {
+        "title": "Librerian API",
+        "openapi": "3.0.3",
+        "uiversion": 3,
+        "doc_dir": "./doc"
+    }
+    swagger = Swagger(app, template_file="doc/librerian.yml")
 
     if test_config is None:
         app.config.from_pyfile("config.py", silent=True)
@@ -51,8 +60,13 @@ def create_app(test_config=None):
 
     app.register_blueprint(api.api_bp)
 
-    @app.route("/test/")
-    def test():
-        return "Test function works aight", 200
+    @app.route("/api/")
+    def entry_point():
+        #TODO
+        pass
+
+    @app.route("/profiles/<resource>/")
+    def send_profile_html(resource):
+        return send_from_directory(app.static_folder, "{}.html".format(resource))
 
     return app

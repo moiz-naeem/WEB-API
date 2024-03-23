@@ -565,11 +565,11 @@ def generate_db_command(count=1):
     add_example_library()
 
 
-"""
-Example users Alice and Bob, and Alice's library
-to always have one example that persists in addition to the randomized data
-"""
 def add_example_library():
+    """
+    Example users Alice and Bob, and Alice's library
+    to always have one example that persists in addition to the randomized data
+    """
     user = User(
             handle=f"alice123",
             first_name="Alice",

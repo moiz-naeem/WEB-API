@@ -11,12 +11,14 @@ from werkzeug.exceptions import BadRequest
 
 from flask import Response, request, url_for
 from flask_restful import Resource
+from flasgger import swag_from, validate
 from sqlalchemy.exc import IntegrityError
 
 from librerian.models import User
 from librerian import db
 
 class UserCollection(Resource):
+    @swag_from("../doc/usercollection/get.yml")
     def get(self):
         #TODO
         body = {"items": []}
@@ -28,17 +30,11 @@ class UserCollection(Resource):
             mimetype="application/json"
         )
 
+    @swag_from("../doc/usercollection/post.yml")
     def post(self):
         if not request.json:
-            return Response(
-                response="Reguest not json",
-                status=415
-            )
-
-        try:
-            validate(request.json, User.json_schema(), format_checker=draft7_format_checker)
-        except ValidationError as e:
-            raise BadRequest(description=str(e)) from e
+            return "Wrong media type was used", 415
+        validate(request.json, "User", "../doc/librerian.yml")
 
         user = User()
         user.deserialize(doc=request.json)
@@ -49,13 +45,13 @@ class UserCollection(Resource):
         except IntegrityError:
             db.session.rollback()
             return Response(
-                response=f"{user} already exits",
+                response="A user with the same handle or email already exists",
                 status=409
             )
 
         return Response(
             headers={"Location": url_for("api.useritem", user=user)},
-            response=f"{user} creation succesful",
+            response="New user created succesfully",
             status=201
         )
 

@@ -11,6 +11,8 @@ setup(
         "flask-caching",
         "flask-restful",
         "flask-sqlalchemy",
+        "flasgger",
+        "pyyaml",
         "jsonschema",
         "rfc3339-validator",
         "SQLAlchemy",
