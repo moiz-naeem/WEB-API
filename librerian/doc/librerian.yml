@@ -26,7 +26,7 @@ components:
       - email
       properties:
         contact_phone:
-          description: phone number of the user
+          description: Phone number of the user
           maxLength: 64
           minLength: 1
           type: string
@@ -42,7 +42,7 @@ components:
           minLength: 1
           type: string
         handle:
-          description: Handle of the user, unique to user
+          description: Handle of the user (must be unique for each user)
           maxLength: 64
           minLength: 1
           type: string
@@ -103,12 +103,12 @@ components:
           minLength: 1
           type: string
         notes:
-          description: User defined notes for book
+          description: User defined notes for the book
           maxLength: 64
           minLength: 1
           type: string
         status:
-          description: Status code of book, range from (0-N)
+          description: Status code of the book, range from (0-N)
           enum:
           - 0
           - 1
@@ -118,15 +118,15 @@ components:
           - 5
           type: integer
         validity_end:
-          description: Datetime when book is due
+          description: Datetime for when the book is due to be returned
           format: date-time
           type: string
         validity_start:
-          description: Datetime when books was borrowed
+          description: Datetime for when the book was borrowed
           format: date-time
           type: string
         work_id:
-          description: ID of work that book is instance of
+          description: ID of the work that the book is an instance of
           type: integer
     Work:
       type: object
@@ -135,12 +135,12 @@ components:
       - author
       properties:
         author:
-          description: Name works author
+          description: Name of the work's author
           maxLength: 64
           minLength: 1
           type: string
         cover:
-          description: URI to cover of the work
+          description: URI pointing to the cover of the work
           format: uri
           maxLength: 64
           minLength: 1
@@ -151,7 +151,7 @@ components:
           minLength: 1
           type: string
         title:
-          description: Title of work
+          description: Title of the work
           maxLength: 64
           minLength: 1
           type: string
