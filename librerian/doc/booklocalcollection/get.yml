@@ -1,0 +1,17 @@
+---
+tags:
+  - Book
+description: Get the list of all the books in single library.
+parameters:
+  - $ref: '#/components/parameters/userParam'
+  - $ref: '#/components/parameters/libraryParam'
+responses:
+  '200':
+    description: List of books
+    content:
+      application/json:
+        example:
+          items:
+          - status: 0
+            notes: Book I got from the sale last week
+            work_id: 12

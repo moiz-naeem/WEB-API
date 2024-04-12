@@ -2,6 +2,9 @@
 tags:
   - Book
 description: Create a new book
+parameters:
+  - $ref: '#/components/parameters/userParam'
+  - $ref: '#/components/parameters/libraryParam'
 requestBody:
   description: JSON document that contains new basic data for the book
   content:

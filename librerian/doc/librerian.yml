@@ -7,7 +7,7 @@ openapi: 3.0.3
 info:
   title: Librerian - OpenAPI 3.0
   description: |-
-    Placeholder text
+    
     [Librerian repository](https://github.com/moiz-naeem/WEB-API)
 #  termsOfService: http://foobar.placeholder
 #  contact:
@@ -16,6 +16,16 @@ info:
     name: GPL-3.0
     url: https://www.gnu.org/licenses/gpl-3.0.en.html
   version: 0.0.1
+
+tags:
+ -  name: User
+    description: Everything about users
+ -  name: Library
+    description: Everything about libraries
+ -  name: Book
+    description: Everything about books
+ -  name: Work
+    description: Everything about works
 
 components:
   schemas:
@@ -155,3 +165,33 @@ components:
           maxLength: 64
           minLength: 1
           type: string
+
+  parameters:
+    userParam:
+      name: user
+      in: path
+      description: User handle
+      required: true
+      schema:
+        type: string
+    libraryParam:
+      name: library
+      in: path
+      description: Library name
+      required: true
+      schema:
+        type: string
+    bookParam:
+      name: book
+      in: path
+      description: Book id
+      required: true
+      schema:
+        type: integer
+    workParam:
+      name: work
+      in: path
+      description: Work id
+      required: true
+      schema:
+        type: integer

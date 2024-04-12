@@ -16,16 +16,11 @@ from sqlalchemy.exc import IntegrityError
 from librerian.models import Library
 from librerian import db
 
-class LibraryCollection(Resource):
-    @swag_from("../doc/librarycollection/get.yml")
-    def get(self, user=None):
-        if user is None:
-            library_list = Library.query.all()
-        else:
-            library_list = Library.query.filter_by(owner=user)
-
+class LibraryGlobalCollection(Resource):
+    @swag_from("../doc/libraryglobalcollection/get.yml")
+    def get(self):
         body = {"items": []}
-        for library in library_list:
+        for library in Library.query.all():
             body["items"].append(library.serialize())
         return Response(
             response=json.dumps(body, indent=4),
@@ -33,7 +28,19 @@ class LibraryCollection(Resource):
             mimetype="application/json"
         )
 
-    @swag_from("../doc/librarycollection/post.yml")
+class LibraryLocalCollection(Resource):
+    @swag_from("../doc/librarylocalcollection/get.yml")
+    def get(self, user=None):
+        body = {"items": []}
+        for library in Library.query.filter_by(owner=user):
+            body["items"].append(library.serialize())
+        return Response(
+            response=json.dumps(body, indent=4),
+            status=200,
+            mimetype="application/json"
+        )
+
+    @swag_from("../doc/librarylocalcollection/post.yml")
     def post(self, user=None):
         if user is None:
             return "Invalid URL for POST", 415
@@ -85,7 +92,7 @@ class LibraryItem(Resource):
 
         return "The library was updated succesfully", 204
         
-
+    @swag_from("../doc/libraryitem/delete.yml")
     def delete(self, _user=None, library=None):
         db.session.delete(library)
         db.session.commit()

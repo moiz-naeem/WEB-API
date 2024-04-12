@@ -2,6 +2,9 @@
 tags:
   - Library
 description: Get details of library
+parameters:
+  - $ref: '#/components/parameters/userParam'
+  - $ref: '#/components/parameters/libraryParam'
 responses:
   '200':
     description: Data of single library

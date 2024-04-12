@@ -2,6 +2,8 @@
 tags:
   - User
 description: Get details of user
+parameters:
+  - $ref: '#/components/parameters/userParam'
 responses:
   '200':
     description: Data of single user

@@ -2,6 +2,8 @@
 tags:
   - User
 description: Delete user
+parameters:
+  - $ref: '#/components/parameters/userParam'
 responses:
   '200':
     description: The user was succesfully deleted

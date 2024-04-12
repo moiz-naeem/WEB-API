@@ -2,6 +2,10 @@
 tags:
   - Book
 description: Get details of the book
+parameters:
+  - $ref: '#/components/parameters/userParam'
+  - $ref: '#/components/parameters/libraryParam'
+  - $ref: '#/components/parameters/bookParam'
 responses:
   '200':
     description: Data of single book

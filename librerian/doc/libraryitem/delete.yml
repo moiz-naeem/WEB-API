@@ -2,6 +2,9 @@
 tags:
   - Library
 description: Delete library, and all the books in the library.
+parameters:
+  - $ref: '#/components/parameters/userParam'
+  - $ref: '#/components/parameters/libraryParam'
 responses:
   '200':
     description: The library was succesfully deleted

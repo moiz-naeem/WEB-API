@@ -1,7 +1,9 @@
 ---
 tags:
   - Library
-description: Get the list of all libraries or list libraries owned by the user
+description: Get the list of all the libraries owned by the user
+parameters:
+  - $ref: '#/components/parameters/userParam'
 responses:
   '200':
     description: List of libraries

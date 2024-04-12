@@ -2,6 +2,8 @@
 tags:
   - User
 description: Replace user data with new values
+parameters:
+  - $ref: '#/components/parameters/userParam'
 requestBody:
   description: JSON document that contains new basic data for the user
   content:

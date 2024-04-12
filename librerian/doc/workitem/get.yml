@@ -2,6 +2,8 @@
 tags:
   - Work
 description: Get details of the work
+parameters:
+  - $ref: '#/components/parameters/workParam'
 responses:
   '200':
     description: Data of single work

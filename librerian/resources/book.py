@@ -2,7 +2,8 @@
 Book resources
 
 Classes:
-    BookCollection : Resource
+    BookGlobalCollection : Resource
+    BookLibraryCollection : Resource
     BookItem : Resource
 """
 import json
@@ -16,15 +17,11 @@ from sqlalchemy.exc import IntegrityError
 from librerian.models import Book, Work
 from librerian import db
 
-class BookCollection(Resource):
-    @swag_from("../doc/bookcollection/get.yml")
-    def get(self, _user=None, library=None):
-        if library is None:
-            book_list = Book.query.all()
-        else:
-            book_list = Book.query.filter_by(library=library)
+class BookGlobalCollection(Resource):
+    @swag_from("../doc/bookglobalcollection/get.yml")
+    def get(self):
         body = {"items": []}
-        for book in book_list:
+        for book in Book.query.all():
             body["items"].append(book.serialize())
         return Response(
             response=json.dumps(body, indent=4),
@@ -32,10 +29,20 @@ class BookCollection(Resource):
             mimetype="application/json"
         )
 
-    @swag_from("../doc/bookcollection/post.yml")
+class BookLocalCollection(Resource):
+    @swag_from("../doc/booklocalcollection/get.yml")
+    def get(self, _user=None, library=None):
+        body = {"items": []}
+        for book in Book.query.filter_by(library=library):
+            body["items"].append(book.serialize())
+        return Response(
+            response=json.dumps(body, indent=4),
+            status=200,
+            mimetype="application/json"
+        )
+
+    @swag_from("../doc/booklocalcollection/post.yml")
     def post(self, user=None, library=None):
-        if user is None:
-            return "Invalid URL for POST", 415
         if not request.json:
             return "Wrong media type was used", 415
         
@@ -63,7 +70,7 @@ class BookCollection(Resource):
 class BookItem(Resource):
     @swag_from("../doc/bookitem/get.yml")
     def get(self, _user=None, _library=None, book=None):
-        #TODO
+        #TODO hypermedia maybe
         return Response(
             response=json.dumps(book.serialize(), indent=4),
             status=200,

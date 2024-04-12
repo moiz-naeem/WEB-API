@@ -2,6 +2,8 @@
 tags:
   - Work
 description: Replace work data with new values
+parameters:
+  - $ref: '#/components/parameters/workParam'
 requestBody:
   description: JSON document that contains new basic data for the work
   content:

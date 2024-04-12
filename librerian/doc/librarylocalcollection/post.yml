@@ -2,6 +2,8 @@
 tags:
   - Library
 description: Create a new library
+parameters:
+  - $ref: '#/components/parameters/userParam'
 requestBody:
   description: JSON document that contains new basic data for the library
   content:

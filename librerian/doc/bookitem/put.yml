@@ -2,6 +2,10 @@
 tags:
   - Book
 description: Replace book data with new values
+parameters:
+  - $ref: '#/components/parameters/userParam'
+  - $ref: '#/components/parameters/libraryParam'
+  - $ref: '#/components/parameters/bookParam'
 requestBody:
   description: JSON document that contains new basic data for the book
   content:
