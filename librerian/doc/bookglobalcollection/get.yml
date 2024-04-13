@@ -1,7 +1,8 @@
+Fetch list of all the books
 ---
 tags:
   - Book
-summary: Fetch list of all the books
+
 description: Get the list of all the books in the system
 responses:
   '200':
