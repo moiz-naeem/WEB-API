@@ -6,7 +6,6 @@ Classes:
     LibraryItem : Resource
 """
 import json
-from werkzeug.exceptions import BadRequest
 
 from flask import Response, request, url_for
 from flask_restful import Resource
@@ -17,31 +16,45 @@ from librerian.models import Library
 from librerian import db
 
 class LibraryGlobalCollection(Resource):
+    """
+    LibraryGlobalCollection
+
+    Methods:
+    - get
+    """
     @swag_from("../doc/libraryglobalcollection/get.yml")
     def get(self):
+        """
+        Fetch list of all the libraries
+        """
         body = {"items": []}
         for library in Library.query.all():
             body["items"].append(library.serialize())
-        return Response(
-            response=json.dumps(body, indent=4),
-            status=200,
-            mimetype="application/json"
-        )
+        return Response(response=json.dumps(body), status=200, mimetype="application/json")
 
 class LibraryLocalCollection(Resource):
+    """
+    LibraryLocalCollection
+
+    Methods:
+    - get
+    - post
+    """
     @swag_from("../doc/librarylocalcollection/get.yml")
     def get(self, user=None):
+        """
+        Fetch list of libraries of an user
+        """
         body = {"items": []}
         for library in Library.query.filter_by(owner=user):
             body["items"].append(library.serialize())
-        return Response(
-            response=json.dumps(body, indent=4),
-            status=200,
-            mimetype="application/json"
-        )
+        return Response(response=json.dumps(body), status=200, mimetype="application/json")
 
     @swag_from("../doc/librarylocalcollection/post.yml")
     def post(self, user=None):
+        """
+        Add a library
+        """
         if user is None:
             return "Invalid URL for POST", 415
         if not request.json:
@@ -66,9 +79,20 @@ class LibraryLocalCollection(Resource):
         )
 
 class LibraryItem(Resource):
+    """
+    LibraryItem resource
+
+    Methods:
+    - get
+    - put
+    - delete
+    """
+
     @swag_from("../doc/libraryitem/get.yml")
     def get(self, _user=None, library=None):
-        #TODO
+        """
+        Fetch library item
+        """
         return Response(
             response=json.dumps(library.serialize(), indent=4),
             status=200,
@@ -77,6 +101,9 @@ class LibraryItem(Resource):
 
     @swag_from("../doc/libraryitem/put.yml")
     def put(self, user=None, library=None):
+        """
+        Modify library item
+        """
         if not request.json:
             return "Wrong media type was used", 415
         validate(request.json, "Library", "../doc/librerian.yml")
@@ -91,9 +118,12 @@ class LibraryItem(Resource):
             return "A library with the same name already exists", 409
 
         return "The library was updated succesfully", 204
-        
+
     @swag_from("../doc/libraryitem/delete.yml")
     def delete(self, _user=None, library=None):
+        """
+        Delete library item
+        """
         db.session.delete(library)
         db.session.commit()
         return "The library was succesfully deleted", 200

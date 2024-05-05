@@ -6,7 +6,6 @@ Classes:
     WorkItem : Resource
 """
 import json
-from werkzeug.exceptions import BadRequest
 
 from flask import Response, request, url_for
 from flask_restful import Resource
@@ -17,23 +16,31 @@ from librerian.models import Work, Book
 from librerian import db
 
 class WorkCollection(Resource):
+    """
+    Work Collection resource
+
+    Methods:
+    - get
+    - post
+    """
     @swag_from("../doc/workcollection/get.yml")
     def get(self):
+        """
+        Fetch a list of the works
+        """
         work_list = Work.query.all()
         body = {"items": []}
         for work in work_list:
             body["items"].append(work.serialize())
-        return Response(
-            response=json.dumps(body, indent=4),
-            status=200,
-            mimetype="application/json"
-        )
-    
+        return Response(response=json.dumps(body), status=200, mimetype="application/json")
+
     @swag_from("../doc/workcollection/post.yml")
     def post(self):
+        """
+        Add a work
+        """
         if not request.json:
             return "Wrong media type was used", 415
-        
         validate(request.json, "Work", "../doc/librerian.yml")
 
         work = Work()
@@ -53,9 +60,19 @@ class WorkCollection(Resource):
         )
 
 class WorkItem(Resource):
+    """
+    WorkItem resource
+
+    Methods:
+    - get
+    - put
+    - delete
+    """
     @swag_from("../doc/workitem/get.yml")
     def get(self, work):
-        #TODO
+        """
+        Fetch work item
+        """
         return Response(
             response=json.dumps(work.serialize(), indent=4),
             status=200,
@@ -64,9 +81,11 @@ class WorkItem(Resource):
 
     @swag_from("../doc/workitem/put.yml")
     def put(self, work):
+        """
+        Modify work item
+        """
         if not request.json:
             return "Wrong media type was used", 415
-        
         validate(request.json, "Work", "../doc/librerian.yml")
 
         work = Work()
@@ -87,6 +106,9 @@ class WorkItem(Resource):
 
     @swag_from("../doc/workitem/delete.yml")
     def delete(self, work):
+        """
+        Delete work item
+        """
         if not Book.query.filter_by(work=work):
             db.session.delete(work)
             db.session.commit()

@@ -62,11 +62,10 @@ def create_app(test_config=None):
 
     @app.route("/api/")
     def entry_point():
-        #TODO
         pass
 
     @app.route("/profiles/<resource>/")
     def send_profile_html(resource):
-        return send_from_directory(app.static_folder, "{}.html".format(resource))
+        return send_from_directory(app.static_folder, f"{resource}.html")
 
     return app
