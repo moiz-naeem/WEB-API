@@ -17,7 +17,10 @@ Functions:
     random_work
     generate_db_command
 """
+import random
+import string
 from datetime import datetime
+
 import click
 from flask.cli import with_appcontext
 from librerian import db
@@ -144,7 +147,6 @@ class Library(db.Model):
         self.country = doc.get("country")
         self.postal_code = doc.get("postal_code")
         self.contact_email = doc.get("contact_email")
-
 
 class Book(db.Model):
     """
@@ -281,8 +283,6 @@ def random_string(length=10):
         length : int
             defines length of string
     """
-    import random
-    import string
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(length))
 

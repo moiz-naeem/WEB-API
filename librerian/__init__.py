@@ -46,17 +46,17 @@ def create_app(test_config=None):
 
     from . import models
     from . import api
-
-    from librerian.utils import UserConverter, LibraryConverter, BookConverter, WorkConverter
+    from . import utils
+    #from librerian.utils import UserConverter, LibraryConverter, BookConverter, WorkConverter
 
     app.cli.add_command(models.init_db_command)
     app.cli.add_command(models.generate_db_command)
     app.cli.add_command(models.empty_db_command)
 
-    app.url_map.converters["user"] = UserConverter
-    app.url_map.converters["library"] = LibraryConverter
-    app.url_map.converters["book"] = BookConverter
-    app.url_map.converters["work"] = WorkConverter
+    app.url_map.converters["user"] = utils.UserConverter
+    app.url_map.converters["library"] = utils.LibraryConverter
+    app.url_map.converters["book"] = utils.BookConverter
+    app.url_map.converters["work"] = utils.WorkConverter
 
     app.register_blueprint(api.api_bp)
 

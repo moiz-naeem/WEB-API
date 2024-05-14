@@ -7,10 +7,9 @@ Classes:
     BookConverter : BaseConverter
     WorkConverter : BaseConverter
 """
-#import json
-#import secrets
+
 from urllib import parse
-#from flask import Response, request, url_for
+
 from werkzeug.exceptions import NotFound
 from werkzeug.routing import BaseConverter
 

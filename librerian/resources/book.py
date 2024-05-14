@@ -49,7 +49,7 @@ class BookLocalCollection(Resource):
         body = {"items": []}
         for book in Book.query.filter_by(library=library):
             body["items"].append(book.serialize())
-        return Response(response=json.dumps(body, indent=4), status=200, mimetype="application/json")
+        return Response(response=json.dumps(body), status=200, mimetype="application/json")
 
     @swag_from("../doc/booklocalcollection/post.yml")
     def post(self, user=None, library=None):

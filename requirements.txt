@@ -6,3 +6,4 @@ jsonschema
 pytest
 flasgger
 pyyaml
+requests
