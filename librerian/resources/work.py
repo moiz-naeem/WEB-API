@@ -15,6 +15,18 @@ from sqlalchemy.exc import IntegrityError
 from librerian.models import Work, Book
 from librerian import db
 
+def itemize(work):
+    data = work.serialize()
+    data["links"] = {
+        "self": {
+            "href": url_for("api.workitem", work=work)
+        },
+        "up": {
+            "href": url_for("api.workcollection")
+        }
+    }
+    return data
+
 class WorkCollection(Resource):
     """
     Work Collection resource
@@ -31,7 +43,7 @@ class WorkCollection(Resource):
         work_list = Work.query.all()
         body = {"items": []}
         for work in work_list:
-            body["items"].append(work.serialize())
+            body["items"].append(itemize(work))
         return Response(response=json.dumps(body), status=200, mimetype="application/json")
 
     @swag_from("../doc/workcollection/post.yml")
@@ -74,7 +86,7 @@ class WorkItem(Resource):
         Fetch work item
         """
         return Response(
-            response=json.dumps(work.serialize(), indent=4),
+            response=json.dumps(itemize(work)),
             status=200,
             mimetype="application/json"
         )
@@ -100,7 +112,7 @@ class WorkItem(Resource):
 
         return Response(
             headers={"Location": url_for("api.workitem", work=work)},
-            response="The work was created succesfully",
+            response="The work was modified succesfully",
             status=201
         )
 

@@ -15,6 +15,18 @@ from sqlalchemy.exc import IntegrityError
 from librerian.models import User
 from librerian import db
 
+def itemize(user):
+    data = user.serialize(short_form=True)
+    data["links"] = {
+        "self": {
+            "href": url_for("api.useritem", user=user)
+        },
+        "up": {
+            "href": url_for("api.usercollection")
+        }
+    }
+    return data
+
 class UserCollection(Resource):
     """
     UserCollection resource
@@ -30,7 +42,7 @@ class UserCollection(Resource):
         """
         body = {"items": []}
         for user in User.query.all():
-            body["items"].append(user.serialize(short_form=True))
+            body["items"].append(itemize(user))
         return Response(response=json.dumps(body), status=200, mimetype="application/json")
 
     @swag_from("../doc/usercollection/post.yml")
@@ -74,7 +86,7 @@ class UserItem(Resource):
         Fetch user item
         """
         return Response(
-            response=json.dumps(user.serialize(), indent=4),
+            response=json.dumps(itemize(user)),
             status=200,
             mimetype="application/json"
         )

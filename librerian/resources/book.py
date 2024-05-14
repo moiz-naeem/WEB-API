@@ -3,7 +3,7 @@ Book resources
 
 Classes:
     BookGlobalCollection : Resource
-    BookLibraryCollection : Resource
+    BookLocalCollection : Resource
     BookItem : Resource
 """
 import json
@@ -15,6 +15,18 @@ from sqlalchemy.exc import IntegrityError
 
 from librerian.models import Book, Work
 from librerian import db
+
+def itemize(book):
+    data = book.serialize()
+    data["links"] = {
+        "self": {
+            "href": url_for("api.bookitem", book=book, library=book.library, user=book.library.owner)
+        },
+        "up": {
+            "href": url_for("api.booklocalcollection", library=book.library, user=book.library.owner)
+        }
+    }
+    return data
 
 class BookGlobalCollection(Resource):
     """
@@ -30,7 +42,7 @@ class BookGlobalCollection(Resource):
         """
         body = {"items": []}
         for book in Book.query.all():
-            body["items"].append(book.serialize())
+            body["items"].append(itemize(book))
         return Response(response=json.dumps(body), status=200, mimetype="application/json")
 
 class BookLocalCollection(Resource):
@@ -42,7 +54,7 @@ class BookLocalCollection(Resource):
     - post
     """
     @swag_from("../doc/booklocalcollection/get.yml")
-    def get(self, _user=None, library=None):
+    def get(self, user=None, library=None):
         """
         Fetch list of all the books in a library
         """
@@ -88,18 +100,18 @@ class BookItem(Resource):
     - delete
     """
     @swag_from("../doc/bookitem/get.yml")
-    def get(self, _user=None, _library=None, book=None):
+    def get(self, user=None, library=None, book=None):
         """
         Fetch book item
         """
         return Response(
-            response=json.dumps(book.serialize(), indent=4),
+            response=json.dumps(itemize(book)),
             status=200,
             mimetype="application/json"
         )
 
     @swag_from("../doc/bookitem/put.yml")
-    def put(self, _user=None, library=None, book=None):
+    def put(self, user=None, library=None, book=None):
         """
         Modify book item
         """
@@ -119,7 +131,7 @@ class BookItem(Resource):
         return "The book was updated succesfully", 204
 
     @swag_from("../doc/bookitem/delete.yml")
-    def delete(self, _user=None, _library=None, book=None):
+    def delete(self, user=None, library=None, book=None):
         """
         Delete book item
         """

@@ -2,7 +2,8 @@
 Library resources
 
 Classes:
-    LibraryCollection : Resource
+    LibraryGlobalCollection : Resource
+    LibraryLocalCollection : Resource
     LibraryItem : Resource
 """
 import json
@@ -14,6 +15,19 @@ from sqlalchemy.exc import IntegrityError
 
 from librerian.models import Library
 from librerian import db
+
+def itemize(library):
+    data = library.serialize(short_form=True)
+    data["links"] = {
+        "self": {
+            "href": url_for("api.libraryitem", library=library, user=library.owner)
+        },
+        "up": {
+            "href": url_for("api.librarylocalcollection", user=library.owner)
+        }
+    }
+
+    return data
 
 class LibraryGlobalCollection(Resource):
     """
@@ -29,7 +43,7 @@ class LibraryGlobalCollection(Resource):
         """
         body = {"items": []}
         for library in Library.query.all():
-            body["items"].append(library.serialize())
+            body["items"].append(itemize(library))
         return Response(response=json.dumps(body), status=200, mimetype="application/json")
 
 class LibraryLocalCollection(Resource):
@@ -47,7 +61,7 @@ class LibraryLocalCollection(Resource):
         """
         body = {"items": []}
         for library in Library.query.filter_by(owner=user):
-            body["items"].append(library.serialize())
+            body["items"].append(itemize(library))
         return Response(response=json.dumps(body), status=200, mimetype="application/json")
 
     @swag_from("../doc/librarylocalcollection/post.yml")
@@ -89,12 +103,12 @@ class LibraryItem(Resource):
     """
 
     @swag_from("../doc/libraryitem/get.yml")
-    def get(self, _user=None, library=None):
+    def get(self, user=None, library=None):
         """
         Fetch library item
         """
         return Response(
-            response=json.dumps(library.serialize(), indent=4),
+            response=json.dumps(itemize(library)),
             status=200,
             mimetype="application/json"
         )
@@ -120,7 +134,7 @@ class LibraryItem(Resource):
         return "The library was updated succesfully", 204
 
     @swag_from("../doc/libraryitem/delete.yml")
-    def delete(self, _user=None, library=None):
+    def delete(self, user=None, library=None):
         """
         Delete library item
         """
