@@ -22,8 +22,14 @@ def itemize(library):
         "self": {
             "href": url_for("api.libraryitem", library=library, user=library.owner)
         },
-        "up": {
+        "collection": {
             "href": url_for("api.librarylocalcollection", user=library.owner)
+        },
+        "up": {
+            "href": url_for("api.libraryglobalcollection")
+        },
+        "about": {
+            "href": url_for("api.booklocalcollection", library=library, user=library.owner)
         }
     }
 
@@ -41,7 +47,14 @@ class LibraryGlobalCollection(Resource):
         """
         Fetch list of all the libraries
         """
-        body = {"items": []}
+        body = {
+            "items": [],
+            "links": {
+                "self": {
+                    "href": url_for("api.libraryglobalcollection")
+                }
+            }
+        }
         for library in Library.query.all():
             body["items"].append(itemize(library))
         return Response(response=json.dumps(body), status=200, mimetype="application/json")
@@ -59,7 +72,14 @@ class LibraryLocalCollection(Resource):
         """
         Fetch list of libraries of an user
         """
-        body = {"items": []}
+        body = {
+            "items": [],
+            "links": {
+                "self": {
+                    "href": url_for("api.libraryglocalcollection", user=user)
+                }
+            }
+        }
         for library in Library.query.filter_by(owner=user):
             body["items"].append(itemize(library))
         return Response(response=json.dumps(body), status=200, mimetype="application/json")

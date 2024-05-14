@@ -22,8 +22,14 @@ def itemize(book):
         "self": {
             "href": url_for("api.bookitem", book=book, library=book.library, user=book.library.owner)
         },
-        "up": {
+        "collection": {
             "href": url_for("api.booklocalcollection", library=book.library, user=book.library.owner)
+        },
+        "up": {
+            "href": url_for("api.bookglobalcollection")
+        },
+        "type": {
+            "href": url_for("api.workitem", work=book.work)
         }
     }
     return data
@@ -40,7 +46,14 @@ class BookGlobalCollection(Resource):
         """
         Fetch list of all the books
         """
-        body = {"items": []}
+        body = {
+            "items": [],
+            "links": {
+                "self": {
+                    "href": url_for("api.bookglobalcollection")
+                }
+            }
+        }
         for book in Book.query.all():
             body["items"].append(itemize(book))
         return Response(response=json.dumps(body), status=200, mimetype="application/json")
@@ -58,9 +71,16 @@ class BookLocalCollection(Resource):
         """
         Fetch list of all the books in a library
         """
-        body = {"items": []}
+        body = {
+            "items": [],
+            "links": {
+                "self": {
+                    "href": url_for("api.booklocalcollection", library=library, user=user)
+                }
+            }
+        }
         for book in Book.query.filter_by(library=library):
-            body["items"].append(book.serialize())
+            body["items"].append(itemize(book))
         return Response(response=json.dumps(body), status=200, mimetype="application/json")
 
     @swag_from("../doc/booklocalcollection/post.yml")
@@ -85,7 +105,7 @@ class BookLocalCollection(Resource):
             return "Book already exits", 409
 
         return Response(
-            headers={"Location": url_for("api.bookitem", library=library, user=user)},
+            headers={"Location": url_for("api.bookitem", library=library, user=user, book=book)},
             response=f"{book} creation succesful",
             status=201
         )

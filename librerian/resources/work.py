@@ -21,7 +21,7 @@ def itemize(work):
         "self": {
             "href": url_for("api.workitem", work=work)
         },
-        "up": {
+        "collection": {
             "href": url_for("api.workcollection")
         }
     }
@@ -41,7 +41,12 @@ class WorkCollection(Resource):
         Fetch a list of the works
         """
         work_list = Work.query.all()
-        body = {"items": []}
+        body = {
+            "items": [],
+            "self": {
+                "href": url_for("api.workcollection")
+            }
+        }
         for work in work_list:
             body["items"].append(itemize(work))
         return Response(response=json.dumps(body), status=200, mimetype="application/json")
@@ -85,6 +90,10 @@ class WorkItem(Resource):
         """
         Fetch work item
         """
+        data = itemize(work)
+        data["links"] = {"items": []}
+        for book in Book.query(work=work):
+            data["links"]["items"].append(book)
         return Response(
             response=json.dumps(itemize(work)),
             status=200,

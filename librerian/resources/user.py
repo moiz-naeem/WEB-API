@@ -21,8 +21,11 @@ def itemize(user):
         "self": {
             "href": url_for("api.useritem", user=user)
         },
-        "up": {
+        "collection": {
             "href": url_for("api.usercollection")
+        },
+        "about": {
+            "href": url_for("api.librarylocalcollection", user=user)
         }
     }
     return data
@@ -40,7 +43,14 @@ class UserCollection(Resource):
         """
         Fetch a list of users
         """
-        body = {"items": []}
+        body = {
+            "items": [],
+            "links": {
+                "self": {
+                    "href": url_for("api.usercollection")
+                }
+            }
+        }
         for user in User.query.all():
             body["items"].append(itemize(user))
         return Response(response=json.dumps(body), status=200, mimetype="application/json")
