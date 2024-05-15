@@ -11,7 +11,14 @@ responses:
     content:
       application/json:
         example:
-          title: The Brothers Karamazov
-          author: Fyodor Dostoyevsky
+          - title: Vierastila
+            author: Miki Liukkonen
+            cover: 
+            isbn: 978-951-0-48546-0
+            links:
+              self:
+                href: "/api/works/3/"
+              collection:
+                href: "/api/works/"
   '404':
     description: The work was not found

@@ -10,5 +10,54 @@ responses:
       application/json:
         example:
           items:
-          - name: Library of Alexandria
-          - name: The Burning Library of Alexandria
+          - name: jqspqylomt
+            address_line_1: 
+            address_line_2: 
+            city: 
+            country: 
+            postal_code: 
+            contact_email: 
+            links:
+              self:
+                href: "/api/users/acbojwzaqq/libraries/jqspqylomt/"
+              collection:
+                href: "/api/users/acbojwzaqq/libraries/"
+              up:
+                href: "/api/libraries/"
+              about:
+                href: "/api/users/acbojwzaqq/libraries/jqspqylomt/books/"
+          - name: kjogwsjmrf
+            address_line_1: 
+            address_line_2: 
+            city: 
+            country: 
+            postal_code: 
+            contact_email: 
+            links:
+              self:
+                href: "/api/users/acbojwzaqq/libraries/kjogwsjmrf/"
+              collection:
+                href: "/api/users/acbojwzaqq/libraries/"
+              up:
+                href: "/api/libraries/"
+              about:
+                href: "/api/users/acbojwzaqq/libraries/kjogwsjmrf/books/"
+          - name: Alice's library
+            address_line_1: Aliceroad 123
+            address_line_2: PO123
+            city: Aliceland
+            country: AL
+            postal_code: '99999'
+            contact_email: info@alices.library.com
+            links:
+              self:
+                href: "/api/users/bob123/libraries/Alice%27s%20library/"
+              collection:
+                href: "/api/users/bob123/libraries/"
+              up:
+                href: "/api/libraries/"
+              about:
+                href: "/api/users/bob123/libraries/Alice%27s%20library/books/"
+          links:
+            self:
+              href: "/api/libraries/"

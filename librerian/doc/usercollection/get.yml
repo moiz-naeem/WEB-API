@@ -15,8 +15,25 @@ responses:
             last_name: Meikalainen
             email: matti.meikalainen@email.com
             contact_phone: 04123456789
+            links:
+            - self:
+                href: /api/users/mattimeik
+              collection:
+                href: /api/users/
+              about:
+                href: /api/users/string/libraries/
           - handle: maijameik
             first_name: Maija
             last_name: Meikalainen
             email: maija.meikalainen@email.com
             contact_phone: 04987654321
+            links:
+            - self:
+                href: /api/users/maijameik
+              collection:
+                href: /api/users/
+              about:
+                href: /api/users/string/libraries/
+          links:
+            self:
+              href: /api/users/

@@ -12,6 +12,22 @@ responses:
     content:
       application/json:
         example:
-          name: Library of Alexandria
+          name: Alice's library
+          address_line_1: Aliceroad 123
+          address_line_2: PO123
+          city: Aliceland
+          country: AL
+          postal_code: '99999'
+          contact_email: info@alices.library.com
+          links:
+            self:
+              href: "/api/users/bob123/libraries/Alice%27s%20library/"
+            collection:
+              href: "/api/users/bob123/libraries/"
+            up:
+              href: "/api/libraries/"
+            about:
+              href: "/api/users/bob123/libraries/Alice%27s%20library/books/"
+
   '404':
     description: The library was not found

@@ -12,5 +12,35 @@ responses:
         example:
           items:
           - status: 0
-            notes: Book I got from the sale last week
-            work_id: 12
+            notes: 
+            condition: 
+            validity_start: 
+            validity_end: 
+            work_id: 1
+            links:
+              self:
+                href: "/api/users/acbojwzaqq/libraries/jqspqylomt/books/1/"
+              collection:
+                href: "/api/users/acbojwzaqq/libraries/jqspqylomt/books/"
+              up:
+                href: "/api/books/"
+              type:
+                href: "/api/works/1/"
+          - status: 0
+            notes: 
+            condition: 
+            validity_start: 
+            validity_end: 
+            work_id: 2
+            links:
+              self:
+                href: "/api/users/acbojwzaqq/libraries/jqspqylomt/books/2/"
+              collection:
+                href: "/api/users/acbojwzaqq/libraries/jqspqylomt/books/"
+              up:
+                href: "/api/books/"
+              type:
+                href: "/api/works/2/"
+          links:
+            self:
+              href: "/api/books/"

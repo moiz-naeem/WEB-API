@@ -76,7 +76,7 @@ class LibraryLocalCollection(Resource):
             "items": [],
             "links": {
                 "self": {
-                    "href": url_for("api.libraryglocalcollection", user=user)
+                    "href": url_for("api.librarylocalcollection", user=user)
                 }
             }
         }

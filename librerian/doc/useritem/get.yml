@@ -16,5 +16,12 @@ responses:
           last_name: Meikalainen
           email: matti.meikalainen@email.com
           contact_phone: 04123456789
+          links:
+          - self:
+              href: /api/users/mattimeik
+            collection:
+              href: /api/users/
+            about:
+              href: /api/users/string/libraries/
   '404':
     description: The user was not found

@@ -14,6 +14,19 @@ responses:
       application/json:
         example:
           status: 0
-          work_id: 0
+          notes: 
+          condition: 
+          validity_start: 
+          validity_end: 
+          work_id: 1
+          links:
+            self:
+              href: "/api/users/acbojwzaqq/libraries/jqspqylomt/books/1/"
+            collection:
+              href: "/api/users/acbojwzaqq/libraries/jqspqylomt/books/"
+            up:
+              href: "/api/books/"
+            type:
+              href: "/api/works/1/"
   '404':
     description: The book was not found
