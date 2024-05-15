@@ -6,7 +6,7 @@ Functions
 """
 
 import os
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger, swag_from
 from librerian.constants import *
@@ -62,7 +62,7 @@ def create_app(test_config=None):
 
     @app.route("/api/")
     def entry_point():
-        pass
+        return redirect("/api/works/", code=302)
 
     @app.route("/profiles/<resource>/")
     def send_profile_html(resource):

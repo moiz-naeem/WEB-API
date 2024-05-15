@@ -21,28 +21,60 @@ __Remember to include all required documentation and HOWTOs, including how to cr
 ### Database
 Database used is SQLite, check wiki for database schema.
 
-### Requirements
-* SQLAlchemy
-* Flask
-* Flask-SQLAlchemy
+### Dependencies
+Librerian depends on the following python packages
+- flask
+- flask_sqlalchemy
+- flask_restful
+- sqlalchemy
+- jsonschema
+- flasgger
+- pyyaml
+- requests
+- pytest
+- pylint
 
-### Additional requirements for running tests
-* pytest
-
-To install depencies run to following:
+## Setup and Usage
+Recommended way to run 
+Create Python virtual enviroment
 ```bash
+python3 -m venv venv
+```
+
+Set enviroment variables in the activate script that you will be using 
+```bash
+echo "export FLASK_APP=librerian" >> venv/bin/activate
+echo "export FLASK_ENV=develpoment" >> venv/bin/activate
+```
+
+Activate virtual enviroment and install required packages
+```bash
+source venv/bin/activate
 pip install -r requirements.txt
 ```
-
-To install the Librerian as Python package run the following
+Initialize the database 
+```bash
+flask init-db
 ```
+And optionally generate dummy data for testing
+```bash
+flask gen-db
+```
+Now you can run Flask app using
+```bash
+flask run
+```
+
+
+### Running tests
+
+To run Pytest, it is required to install the Librerian as Python package
+```bash
 pip install -e .
 ```
+Afterwhich pytest and pylint can be run
 
-### Testing
-
-To test database run the following (this requires Librerian as package)
-```
-pip install pytest
-pytest tests/db_test.py --verbose
+```bash
+pytest tests
+pylint librerian
 ```
