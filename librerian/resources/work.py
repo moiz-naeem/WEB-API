@@ -27,6 +27,24 @@ def itemize(work):
     }
     return data
 
+def itemize_book(book):
+    data = book.serialize()
+    data["links"] = {
+        "self": {
+            "href": url_for("api.bookitem", book=book, library=book.library, user=book.library.owner)
+        },
+        "collection": {
+            "href": url_for("api.booklocalcollection", library=book.library, user=book.library.owner)
+        },
+        "up": {
+            "href": url_for("api.bookglobalcollection")
+        },
+        "type": {
+            "href": url_for("api.workitem", work=book.work)
+        }
+    }
+    return data
+
 class WorkCollection(Resource):
     """
     Work Collection resource
@@ -91,11 +109,11 @@ class WorkItem(Resource):
         Fetch work item
         """
         data = itemize(work)
-        data["links"] = {"items": []}
-        for book in Book.query(work=work):
-            data["links"]["items"].append(book)
+        data["links"]["items"] = []
+        for book in Book.query.filter_by(work=work):
+            data["links"]["items"].append(itemize_book(book))
         return Response(
-            response=json.dumps(itemize(work)),
+            response=json.dumps(data),
             status=200,
             mimetype="application/json"
         )
