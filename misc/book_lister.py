@@ -47,7 +47,9 @@ def locate_one_library_for_work(work_id):
     library_url = library_url.rsplit('/', 2)[0] + "/"
     resp = requests.get(SERVER_URL + library_url, timeout=20)
     library = resp.json()
-    library_info = library["name"] + ": " + library["city"]
+    library_info = library["name"]
+    if library["city"]:
+        library_info = library_info + ": " + library["city"]
     return library_info
 
 
