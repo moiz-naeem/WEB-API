@@ -39,6 +39,17 @@ def locate_book(work_id):
         return result_libraries
     return "No books found. Did you populate the database with gen-db ?"
 
+def locate_one_library_for_work(work_id):
+    """ Look up one library where a copy of work exists """
+    resp = requests.get(SERVER_URL + "/api/works/"+work_id, timeout=20)
+    work = resp.json()
+    library_url = work["links"]["items"][0]["links"]["collection"]["href"]
+    library_url = library_url.rsplit('/', 2)[0] + "/"
+    resp = requests.get(SERVER_URL + library_url, timeout=20)
+    library = resp.json()
+    library_info = library["name"] + ": " + library["city"]
+    return library_info
+
 
 window = tk.Tk()
 resultlabel = tk.Label(
@@ -53,6 +64,14 @@ listbox = tk.Listbox(window, height = 15,
                   activestyle = 'dotbox')
 label = tk.Label(window, text = "Books in the system")
 
+def find_work_title_by_book(book_item):
+    """ Look up work item based on ID """
+    work_url = book_item["links"]["type"]["href"]
+    resp = requests.get(SERVER_URL + work_url, timeout=20)
+    works = resp.json()
+    return works["title"]
+
+
 def find_all_books():
     """ Look up all books in the system """
     resp = requests.get(SERVER_URL + "/api/books/", timeout=20)
@@ -60,7 +79,7 @@ def find_all_books():
     index = 0
     listbox.delete(0, tk.END)
     for item in books["items"]:
-        title = find_work_title(item["work_id"])
+        title = find_work_title_by_book(item)
         listbox.insert(index, str(item["work_id"]) +"; "+ str(title))
         index += 1
     where_is_button.pack()
@@ -70,9 +89,8 @@ def locate_book_by_listbox_selection():
     """ Look up book based on what was selected in listbox """
     work_id = listbox.get(listbox.curselection())
     work_id = work_id.split(';')[0]
-    work_id = int(work_id)
-    libraries_list = locate_book(work_id)
-    resultlabel.configure(text=libraries_list)
+    library_info = locate_one_library_for_work(work_id)
+    resultlabel.configure(text=library_info)
 
 list_all_button = tk.Button(window,
     text="List all book titles in the system",
@@ -95,5 +113,4 @@ where_is_button = tk.Button(window,
     fg="yellow",
     command=locate_book_by_listbox_selection
 )
-
 window.mainloop()
