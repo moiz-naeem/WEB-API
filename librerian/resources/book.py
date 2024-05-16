@@ -109,7 +109,7 @@ class BookLocalCollection(Resource):
 
         return Response(
             headers={"Location": url_for("api.bookitem", library=library, user=user, book=book)},
-            response=f"Book creation succesful",
+            response="Book creation succesful",
             status=201
         )
 
