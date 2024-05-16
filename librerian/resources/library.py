@@ -17,6 +17,9 @@ from librerian.models import Library
 from librerian import db
 
 def itemize(library):
+    """
+    Itemize library data
+    """
     data = library.serialize(short_form=True)
     data["links"] = {
         "self": {

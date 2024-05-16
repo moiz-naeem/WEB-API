@@ -16,6 +16,9 @@ from librerian.models import Work, Book
 from librerian import db
 
 def itemize(work):
+    """
+    Itemize work data
+    """
     data = work.serialize()
     data["links"] = {
         "self": {
@@ -28,6 +31,9 @@ def itemize(work):
     return data
 
 def itemize_book(book):
+    """
+    Itemize book data
+    """
     data = book.serialize()
     data["links"] = {
         "self": {

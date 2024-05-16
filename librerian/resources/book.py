@@ -17,6 +17,9 @@ from librerian.models import Book, Work
 from librerian import db
 
 def itemize(book):
+    """
+    Itemize book data
+    """
     data = book.serialize()
     data["links"] = {
         "self": {
