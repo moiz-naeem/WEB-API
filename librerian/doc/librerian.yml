@@ -106,6 +106,7 @@ components:
       type: object
       required:
       - status
+      - work_id
       properties:
         condition:
           description: ''

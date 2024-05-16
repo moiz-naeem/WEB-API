@@ -148,7 +148,7 @@ class WorkItem(Resource):
         """
         Delete work item
         """
-        if not Book.query.filter_by(work=work):
+        if Book.query.filter_by(work=work).count() == 0:
             db.session.delete(work)
             db.session.commit()
             return "The work was succesfully deleted", 200

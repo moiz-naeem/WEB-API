@@ -13,8 +13,11 @@ requestBody:
       schema:
         $ref: '#/components/schemas/Book'
     example:
+      condition: ok ish
       status: 0
       work_id: 0
+      validity_start: 2024-05-16
+      validity_end: 2024-05-17
 responses:
   '201':
     description: The book was created succesfully
